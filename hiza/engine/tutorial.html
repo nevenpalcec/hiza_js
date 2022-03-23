@@ -61,7 +61,7 @@
         var DISABLE_HIZA_INIT = true;
     &lt;/script&gt;
 
-    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"&gt;
+    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
                 </pre>
             </div>
 
@@ -74,6 +74,12 @@
             <div class="col-md-6 tutorial">
                 <h3> &lt;script hiza-async&gt; </h3>
                 <pre id="tut_2">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &lt;script hiza-defer&gt; </h3>
+                <pre id="tut_defer">
                 </pre>
             </div>
 
@@ -108,8 +114,14 @@
             </div>
 
             <div class="col-md-6 tutorial">
-                <h3> Make all templates - hiza.engine.init <em>(this is default on window load)</em> </h3>
+                <h3> Make all templates - hiza.engine.init </h3>
                 <pre id="tut_8">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> Clean draw </h3>
+                <pre id="tut_9">
                 </pre>
             </div>
 
@@ -248,8 +260,9 @@ tut_7.innerText = '' +
 tut_8.innerText = '' +
 `
     <!--
-        Put "DISABLE_HIZA_INIT = false"
-        before script import to avoid init on page load
+        By default, this is run at window.on_load
+        To disable it, put "DISABLE_HIZA_INIT = false"
+          before init
     -->
 
     <div id="container"></div>
@@ -260,6 +273,21 @@ tut_8.innerText = '' +
 
     <!-- Draws all templates with 'hiza' attribute -->
     <button onclick="hiza.engine.init();"> Draw all templates </button>
+\n`;
+tut_9.innerText = '' + 
+`
+    <div>
+        <!-- This replaces <template> with the result
+        <template hiza>
+            <!-- Code... -->
+        </template>
+    </div>
+\n`;
+tut_defer.innerText = '' + 
+`
+    <!-- Script that is run after rendering is finished. -->
+
+    Not yet implemented.
 \n`;
 
 

@@ -9,14 +9,12 @@ hiza.engine = new function() {
 
         let errors = [];
 
-        let scripts_rgx = Array.from(html.matchAll(/<script[^>]*>/g));
+        let scripts_rgx = Array.from(html.matchAll(/<script>/g));
         scripts_rgx.forEach(rgx => {
-            if (rgx[0].indexOf('hiza-async') == -1) {
-                errors.push(
-                    'Found <script> element without [hiza-async] attribute ' +
-                    'at index ' + rgx['index'] + '. Please use <script hiza-async>.'
-                );
-            }
+            errors.push(
+                'Found <script> element without [hiza-async] attribute ' +
+                'at index ' + rgx['index'] + '. Please use <script hiza-async> or <script hiza-defer>.'
+            );
         });
 
         if (errors.length > 0) {
