@@ -215,7 +215,7 @@ hiza.engine = new function() {
         let else_ifs = [];
         let _else_result = null;
         let html_after = html.substring(if_scope_end);
-        let else_if_regex = /^\}\s*\$(else\s+if|else)(\s*\([^)]+\)|\s*)\s*\{/;
+        let else_if_regex = /^\}\s*\$(else\s+if|else)(\s*\([^{]+\)|\s*)\s*\{/;
 
         for (let else_if = html_after.match(else_if_regex); !!else_if == true; else_if = html_after.match(else_if_regex)) {
 
@@ -309,8 +309,6 @@ hiza.engine = new function() {
             let magic = html.match(/(<script>|\$(if|for)\s*(\(([^{]+)\)|)\s*\{)/);
             // Try to find: <script>, $if, $for, $script, $script(SCOPE_NAME)
             // let magic = html.match(/(<script>|\$(if|for|script)\s*(\(([^)]+)\)|)\s*\{)/);
-
-            console.log(magic);
 
             if (!magic) {
                 break;

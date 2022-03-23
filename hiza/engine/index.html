@@ -77,7 +77,7 @@
                             ${ object['name'] }
                             <br>
                 
-                            $if(object['picture_url_amazon']) {
+                            $if(object['picture_url_amazon'] || ''.toUpperCase()) {
                                 <img src="${ object['picture_url_amazon'] }" style="width: 10rem;">
                             }
                             $else {
