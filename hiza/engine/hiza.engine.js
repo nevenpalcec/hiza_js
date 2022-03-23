@@ -159,7 +159,6 @@ hiza.engine = new function() {
 
     async function process_for(html, regx, variables) {
 
-        debugger;
         let txt = regx[0];
         let condition = regx[4];
         let _loop_var_ = condition.match(/(var|let) (\w+)/)[2];
@@ -363,12 +362,10 @@ hiza.engine = new function() {
 
     this.init = function() {
         // Init
-        if (hiza.engine.disable_init == false) {
-            document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
-        }
+        document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
     }
 };
 
-if (typeof DISABLE_HIZA_ENGINE !== 'undefined') {
+if (typeof DISABLE_HIZA_ENGINE === 'undefined' || DISABLE_HIZA_ENGINE !== true) {
     window.addEventListener('load', hiza.engine.init);
 }

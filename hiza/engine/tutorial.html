@@ -30,6 +30,8 @@
         .tutorial pre {
             border: 1px solid lightgray;
             border-left: 4px solid #04AA6D;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -43,13 +45,26 @@
             </div>
 
             <div class="col-md-6 tutorial">
+                <h3> Import </h3>
+                <pre id="tut_0">
+
+    &lt;!-- Disable automatic hiza.engine.init() --&gt;
+    &lt;script&gt;
+        var DISABLE_HIZA_INIT = true;
+    &lt;/script&gt;
+
+    &lt;script src="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/hiza.engine.js"&gt;
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
                 <h3> &lt;template hiza&gt; </h3>
                 <pre id="tut_1">
                 </pre>
             </div>
 
             <div class="col-md-6 tutorial">
-                <h3> &lt;script hiza-async&gt; - SCOPE keyword </h3>
+                <h3> &lt;script hiza-async&gt; </h3>
                 <pre id="tut_2">
                 </pre>
             </div>
@@ -61,7 +76,7 @@
             </div>
 
             <div class="col-md-6 tutorial">
-                <h3> $for (let idx) </h3>
+                <h3> $for (let idx ...) </h3>
                 <pre id="tut_4">
                 </pre>
             </div>
@@ -87,6 +102,12 @@ tut_1.innerText = '' +
 tut_2.innerText = '' +
 `
     // Code inside <script hiza-async>
+
+    /*
+        Keywords:
+            SCOPE - template scope
+            SCOPE.DEST - destination element
+    */
 
     // Put variable on global scope
     SCOPE['objects'] = [1, 2, 3];

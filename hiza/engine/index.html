@@ -30,13 +30,9 @@
 
         <template hiza id="template_test" data-dest="#content">
     
-            <script hiza-async></script>
-
             <!-- Show loading -->
             <script hiza-async>
 
-                debugger;
-        
                 console.log('Hiža variable scope:');
                 console.log(SCOPE);
         
@@ -105,7 +101,9 @@
 
     </div>
 
-<!-- Template -->
 
+<script>
 
+    hiza.engine.init();
+</script>
 </body>
