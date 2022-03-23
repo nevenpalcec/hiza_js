@@ -1,0 +1,111 @@
+<head>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="./favicon.png">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Hiža Engine -->
+    <script src="./hiza.engine.js"></script>
+
+</head>
+<body>
+
+    <div class="btn btn-info text-white w-100" onclick="template_test.hiza.run();">
+        Run Hiža engine
+    </div>
+
+    <div class="container p-4">
+        <div class="loading" style="display: none;">
+            Loading...
+        </div>
+
+        <div id="content">
+            <!-- Template goes here -->
+        </div>
+
+        <template hiza id="template_test" data-dest="#content">
+    
+            <script hiza-async></script>
+
+            <!-- Show loading -->
+            <script hiza-async>
+
+                debugger;
+        
+                console.log('Hiža variable scope:');
+                console.log(SCOPE);
+        
+                SCOPE.DEST.innerHTML = '';
+        
+                var parentElement = SCOPE.DEST.parentElement;
+                parentElement.querySelector('.loading').style.display = '';
+        
+            </script>
+            
+            <!-- Set objects to SCOPE -->
+            <script hiza-async>
+        
+                let url = 'https://api.my-rents.com/objects/list/1';
+                let objects = await fetch(url).then(res => res.json());
+                SCOPE.objects = objects;
+        
+            </script>
+
+            <!-- Show objects in SCOPE -->
+            <div class="row">
+                <div class="col-md-6">
+
+                    $for (let i = 0; i < objects.length && i < 5; ++i) {
+                        <p>
+                            ${ objects[i]['name'] }
+                            <br>
+                
+                            $if(objects[i]['picture_url_amazon']) {
+                                <img src="${ objects[i]['picture_url_amazon'] }" style="width: 10rem;">
+                            }
+                            $else {
+                                <em>Image not found.</em>
+                            }
+                        </p>
+                    }
+                </div>
+                <div class="col-md-6">
+
+                    $for (let object of objects.slice(0, 5)) {
+                        <p>
+                            ${ object['name'] }
+                            <br>
+                
+                            $if(object['picture_url_amazon']) {
+                                <img src="${ object['picture_url_amazon'] }" style="width: 10rem;">
+                            }
+                            $else {
+                                <em>Image not found.</em>
+                            }
+                        </p>
+                    }
+                </div>
+            </div>
+        
+        
+            <!-- Hide loading -->
+            <script hiza-async>
+        
+                var parentElement = SCOPE.DEST.parentElement;
+                parentElement.querySelector('.loading').style.display = 'none';
+        
+            </script>
+            
+        </template>
+
+    </div>
+
+<!-- Template -->
+
+
+</body>
