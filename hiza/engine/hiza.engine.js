@@ -362,9 +362,13 @@ hiza.engine = new function() {
     }
 
     this.init = function() {
-        document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
+        // Init
+        if (hiza.engine.disable_init == false) {
+            document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
+        }
     }
 };
 
-// Init
-window.addEventListener('load', hiza.engine.init);
+if (typeof DISABLE_HIZA_ENGINE !== 'undefined') {
+    window.addEventListener('load', hiza.engine.init);
+}
