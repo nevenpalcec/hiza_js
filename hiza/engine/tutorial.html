@@ -43,10 +43,11 @@
 
             <div class="col-12 pt-4">
                 <h1 class="page_title" onclick="window.open('https://github.com/nevenpalcec/hiza_js', '_blank');">hiza.engine</h1>
+                &nbsp;&nbsp;&nbsp;
+                <h1 class="page_title" onclick="window.open('https://htmlpreview.github.io/?https://github.com/nevenpalcec/hiza_js/blob/main/hiza/engine/index.html', '_blank');">Demo</h1>
             </div>
 
             <div class="col-md-6 mb-4">
-                
                 <input id="tutorial_search" class="form-control" type="text" placeholder="Search tutorial...">
             </div>
             <div class="col"></div>
@@ -55,7 +56,7 @@
                 <h3> Import </h3>
                 <pre id="tut_0">
 
-    &lt;!-- Disable automatic hiza.engine.init() --&gt;
+    &lt;!-- Disable automatic init() --&gt;
     &lt;script&gt;
         var DISABLE_HIZA_INIT = true;
     &lt;/script&gt;
@@ -97,6 +98,18 @@
             <div class="col-md-6 tutorial">
                 <h3> Redraw - EL.hiza.run() </h3>
                 <pre id="tut_6">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> Make one template - hiza.engine.init_one </h3>
+                <pre id="tut_7">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> Make all templates - hiza.engine.init <em>(this is default on window load)</em> </h3>
+                <pre id="tut_8">
                 </pre>
             </div>
 
@@ -218,6 +231,35 @@ tut_6.innerText = '' +
             templ.hiza.run();
         }
     ${'<'}/script>
+\n`;
+tut_7.innerText = '' +
+`
+    <div id="container"></div>
+
+    <!-- Remove 'hiza' attribute to avoid automatic init -->
+    <template id="templ_id" data-dest="#container">
+        <!-- Code... -->
+    </template>
+
+    <button onclick="
+        hiza.engine.init_one(document.getElementById('templ_id'));
+        "> Draw template </button>
+\n`;
+tut_8.innerText = '' +
+`
+    <!--
+        Put "DISABLE_HIZA_INIT = false"
+        before script import to avoid init on page load
+    -->
+
+    <div id="container"></div>
+
+    <template id="templ_id" hiza data-dest="#container">
+        <!-- Code... -->
+    </template>
+
+    <!-- Draws all templates with 'hiza' attribute -->
+    <button onclick="hiza.engine.init();"> Draw all templates </button>
 \n`;
 
 
