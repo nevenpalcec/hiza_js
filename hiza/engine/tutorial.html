@@ -1,0 +1,113 @@
+<head>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="./favicon.png">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Hiža Engine -->
+    <script src="./hiza.engine.js"></script>
+
+    <style>
+
+        .page_title {
+            font-family: 'Courier New', Courier, monospace;
+            display: inline-block;
+            text-decoration: underline;
+        }
+
+        .tutorial {
+            padding: 5px 10px;
+            /* border-bottom: 1px solid black; */
+        }
+        .tutorial pre {
+            border: 1px solid lightgray;
+            border-left: 4px solid #04AA6D;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <class class="row">
+
+            <div class="col-12 pt-4">
+                <h1 class="page_title">hiza.engine</h1>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &lt;template hiza&gt; </h3>
+                <pre id="tut_1">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &lt;script hiza-async&gt; </h3>
+                <pre id="tut_2">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> $if, $else if, $else </h3>
+                <pre id="tut_3">
+                </pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> $for </h3>
+                <pre id="tut_4">
+                </pre>
+            </div>
+
+        </class>
+    </main>
+
+<script>
+tut_1.innerText = '' + 
+`
+    <div id="container"></div>
+
+    <template id="templ_id" hiza data-dest="#container">
+        <!-- Code... -->
+    </template>
+\n`;
+tut_3.innerText = '' + 
+`
+    <div id="container"></div>
+
+    <template id="templ_id" hiza data-dest="#container">
+        
+        <script hiza-async>
+
+            // await is allowed
+            let objects = await fetch(...);
+
+        </script>
+
+    </template>
+\n`;
+tut_3.innerText = '' +
+`
+    <div id="container"></div>
+
+    <template id="templ_id" hiza data-dest="#container">
+
+        $if (condition) {
+        
+        }
+        $else if (condition_2) {
+            
+        }
+        $else {
+            
+        }
+
+    </template>
+\n`;
+
+</script>
+</body>
