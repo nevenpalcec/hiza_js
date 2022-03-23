@@ -44,6 +44,12 @@
                 <h1 class="page_title">hiza.engine</h1>
             </div>
 
+            <div class="col-md-6 mb-4">
+                
+                <input id="tutorial_search" class="form-control" type="text" placeholder="Search tutorial...">
+            </div>
+            <div class="col"></div>
+
             <div class="col-md-6 tutorial">
                 <h3> Import </h3>
                 <pre id="tut_0">
@@ -87,6 +93,12 @@
                 </pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> Redraw - EL.hiza.run() </h3>
+                <pre id="tut_6">
+                </pre>
+            </div>
+
         </class>
     </main>
 
@@ -101,25 +113,44 @@ tut_1.innerText = '' +
 \n`;
 tut_2.innerText = '' +
 `
-    // Code inside script element
+    <div id="container"></div>
 
-    /*
-        Keywords:
-            SCOPE - template scope
-            SCOPE.DEST - destination element
-    */
+    <template id="templ_id" hiza data-dest="#container">
+        
+        ${'<'}script hiza-async>
 
-    // Put variable on global scope
-    SCOPE['objects'] = [1, 2, 3];
+            /*
+                Keywords:
+                - SCOPE - template scope
+                - SCOPE.DEST - destination element
+            */
+           
+           // Using await blocks processing until script is finished
+           let objects = await fetch(...).then(res => res.json());
 
-    // Using await blocks processing until script is finished
-    SCOPE['objects'] = await fetch(...).then(res => res.json());
+           // Put variable on global scope
+           SCOPE['objects'] = objects;
+
+           // Log scope variables
+           console.log(SCOPE);
+        ${'<'}/script>
+
+    </template>
 \n`;
 tut_3.innerText = '' +
 `
     <div id="container"></div>
 
     <template id="templ_id" hiza data-dest="#container">
+        
+        ${'<'}script hiza-async>
+
+            // Show loading
+            SCOPE.DEST.innerHTML = 'Loading...';
+
+            // Dummy objects
+            SCOPE['objects'] = [1, 2, 3];
+        ${'<'}/script>
 
         <!-- Use variable of SCOPE -->
         $if (objects.length > 10) {
@@ -168,6 +199,41 @@ tut_5.innerText = '' +
 
     </template>
 \n`;
+tut_6.innerText = '' +
+`
+    <div id="container"></div>
+
+    <template id="templ_id" hiza data-dest="#container">
+        <!-- Code... -->
+    </template>
+
+    <button onclick="redraw();"> Redraw </button>
+
+    ${'<'}script>
+
+        function redraw() {
+
+            let templ = document.getElementById('templ_id');
+            templ.hiza.run();
+        }
+    ${'<'}/script>
+\n`;
+
+
+tutorial_search.onkeyup = function() {
+
+    document.querySelectorAll('.tutorial').forEach(div => {
+    
+        let s = div.innerText.toLowerCase();
+        let v = tutorial_search.value.toLowerCase();
+        if (s.includes(v)) {
+            div.classList.remove('d-none');
+        }
+        else {
+            div.classList.add('d-none');
+        }
+    });
+};
 
 </script>
 </body>
