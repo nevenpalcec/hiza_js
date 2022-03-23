@@ -1,1 +1,1 @@
-# hiza_js
+# Hiža.js
