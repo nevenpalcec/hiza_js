@@ -20,6 +20,15 @@
         Run Hiža engine
     </div>
 
+    <div class="container">
+        <div id="time_now">
+        </div>
+
+        <template hiza data-dest="#time_now" data-interval="1000">
+            <h1>Time is: ${ new Date().toLocaleTimeString() }</h1>
+        </template>
+    </div>
+
     <div class="container p-4">
         <div class="loading" style="display: none;">
             Loading...

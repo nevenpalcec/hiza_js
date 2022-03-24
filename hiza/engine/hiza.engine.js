@@ -335,7 +335,7 @@ hiza.engine = new function() {
         // Find [data-dest]
         let destination = template.dataset['dest'];
         let scope = {
-            'html_element': template
+            'SELF': template,
         };
 
         if (destination) {
@@ -346,13 +346,27 @@ hiza.engine = new function() {
             console.log('Hiža: [data-dest] not found. Engine will overwrite the <template> element.')
         }
 
-        let templated_html = await hiza.engine.build(template.innerHTML, scope);
+        async function build_and_deploy() {
 
-        if (destination) {
-            destination.innerHTML = templated_html;
+            let templated_html = await hiza.engine.build(template.innerHTML, scope);
+            if (destination) {
+                destination.innerHTML = templated_html;
+            }
+            else {
+                template.outerHTML = templated_html;
+            }
+        }
+
+        if (isNaN(template.dataset.timeout) == false) {
+
+            setTimeout(build_and_deploy, template.dataset.timeout);
+        }
+        else if (isNaN(template.dataset.interval) == false) {
+
+            setInterval(build_and_deploy, template.dataset.timeout);
         }
         else {
-            template.outerHTML = templated_html;
+            await build_and_deploy();
         }
     }
 
