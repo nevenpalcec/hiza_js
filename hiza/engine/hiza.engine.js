@@ -12,8 +12,8 @@ hiza.engine = new function() {
         let scripts_rgx = Array.from(html.matchAll(/<script>/g));
         scripts_rgx.forEach(rgx => {
             errors.push(
-                'Found <script> element without [hiza-async] attribute ' +
-                'at index ' + rgx['index'] + '. Please use <script hiza-async> or <script hiza-defer>.'
+                'Found <script> element without [hiza-*] attribute ' +
+                'at index ' + rgx['index'] + '. Please use hiza-sync, hiza-async or hiza-defer>.'
             );
         });
 
@@ -131,7 +131,7 @@ hiza.engine = new function() {
         return scope_end;
     }
 
-    async function process_script(html, regx, variables) {
+    async function process_script(html, regx, variables, config) {
 
         let txt = regx[0];
         // let scope_name = regx[4];
@@ -143,13 +143,32 @@ hiza.engine = new function() {
         let script_scope_end = get_script_end(html, script_start);
         let scope_html = html.substring(script_scope_start + 1, script_scope_end);
         scope_html = decode(scope_html);
+        let is_async = txt.includes('hiza-async') || txt.includes('hiza-defer');
 
-        await exec_script_scope(`
-            async function __f__() {
-                ${scope_html}
+        async function exec () {
+
+            let prom = exec_script_scope(`
+                ${is_async ? 'async' : ''} function __f__() {
+                    ${scope_html}
+                }
+                __f__()
+            `, scope_name, variables);
+
+            if (is_async) {
+                await prom;
             }
-            __f__()
-        `, scope_name, variables);
+        }
+
+        if (txt.includes('hiza-defer')) {
+
+            if (!config['defer']) {
+                config['defer'] = [];
+            }
+            config['defer'].push(exec);
+        }
+        else {
+            await exec();
+        }
 
         script_scope_end += '</script>'.length - 1;
         return html.substring(0, script_start) + html.substring(script_scope_end + 1);
@@ -281,7 +300,7 @@ hiza.engine = new function() {
         return html;
     }
 
-    this.build = async function (html, variables) {
+    this.build = async function (html, variables, config = {}) {
 
         if (typeof variables === 'undefined') {
             variables = {};
@@ -293,18 +312,20 @@ hiza.engine = new function() {
         // Remove comments
         html = remove_comments(html);
 
-        html = html.replaceAll(/<script hiza-async=?(""|''|)>/g, '<script>');
+        html = html.replaceAll(/<script hiza-sync=?(""|''|)>/g, '<script hiza-sync>');
+        html = html.replaceAll(/<script hiza-async=?(""|''|)>/g, '<script hiza-async>');
+        html = html.replaceAll(/<script hiza-defer=?(""|''|)>/g, '<script hiza-defer>');
         // html = html.replaceAll('<script hiza-async="">', '<script>');
 
         // // Convert chars such as &lt; to <
         // html = decode(html);
 
-        let max_magic = 1000000;
+        let max_magic = 100000;
 
         while (--max_magic) {
 
             // Try to find: <script>, $if, $for
-            let magic = html.match(/(<script>|\$(if|for)\s*(\(([^{]+)\)|)\s*\{)/);
+            let magic = html.match(/(<script hiza-sync>|<script hiza-async>|<script hiza-defer>|\$(if|for)\s*(\(([^{]+)\)|)\s*\{)/);
             // Try to find: <script>, $if, $for, $script, $script(SCOPE_NAME)
             // let magic = html.match(/(<script>|\$(if|for|script)\s*(\(([^)]+)\)|)\s*\{)/);
 
@@ -318,8 +339,8 @@ hiza.engine = new function() {
             else if (magic[2] == 'for') {
                 html = await process_for(html, magic, variables);
             }
-            else if (magic[1] == '<script>') {
-                html = await process_script(html, magic, variables);
+            else if (magic[1].match(/<script hiza-(a?sync|defer)>/)) {
+                html = await process_script(html, magic, variables, config);
             }
         }
 
@@ -331,6 +352,8 @@ hiza.engine = new function() {
         template.hiza = {
             run: () => hiza.engine.init_one(template)
         };
+
+        var config = {};
 
         // Find [data-dest]
         let destination = template.dataset['dest'];
@@ -348,12 +371,22 @@ hiza.engine = new function() {
 
         async function build_and_deploy() {
 
-            let templated_html = await hiza.engine.build(template.innerHTML, scope);
+            let templated_html = await hiza.engine.build(template.innerHTML, scope, config);
             if (destination) {
                 destination.innerHTML = templated_html;
             }
             else {
                 template.outerHTML = templated_html;
+            }
+
+            // Run defer scripts
+            if (config['defer']) {
+
+                let defer_scripts = config['defer'];
+
+                for (let i = 0; i < defer_scripts.length; ++i) {
+                    await defer_scripts[i]();
+                }
             }
         }
 
@@ -368,6 +401,7 @@ hiza.engine = new function() {
         else {
             await build_and_deploy();
         }
+
     }
 
     this.init = function() {

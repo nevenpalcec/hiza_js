@@ -41,7 +41,7 @@
         <template hiza id="template_test" data-dest="#content">
     
             <!-- Show loading -->
-            <script hiza-async>
+            <script hiza-sync>
 
                 console.log('Hiža variable scope:');
                 console.log(SCOPE);
@@ -50,7 +50,13 @@
         
                 var parentElement = SCOPE.DEST.parentElement;
                 parentElement.querySelector('.loading').style.display = '';
-        
+
+            </script>
+            
+            <script hiza-defer>
+                // hiza-defer: run after templating
+
+                console.log('I am done');
             </script>
             
             <!-- Set objects to SCOPE -->
