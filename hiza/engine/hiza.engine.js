@@ -412,6 +412,6 @@ hiza.engine = new function() {
     }
 };
 
-if (typeof DISABLE_HIZA_ENGINE === 'undefined' || DISABLE_HIZA_ENGINE !== true) {
+if (typeof DISABLE_HIZA_INIT === 'undefined' || DISABLE_HIZA_INIT !== true) {
     window.addEventListener('load', hiza.engine.init);
 }

@@ -181,11 +181,19 @@
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <template hiza>
+                    <script>
+                        let numbers = [1, 2, 3];
+                    </script>
 
-                        $for (let i = 0; i < 5; ++i) {
-                            <p> ${i} </p>
-                        }
+                    <template hiza>
+                            $for (let i = 0; i < numbers.length; ++i) {
+                                <span> ${ numbers[i] } </span>
+                            }
+
+                            <br>
+                            $for(let num of numbers) {
+                                <span> ${ num } </span>
+                            }
                     </template>
                 </div>
             </div>
@@ -200,22 +208,30 @@
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
-                <div class="result">
-                    
+                <div class="result d-none">
+
+                    <!-- Put before script import to disable automatic templating -->
+                    <script>
+                        var DISABLE_HIZA_INIT = true;
+                    </script>
                 </div>
             </div>
         </div>
 
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> &lt;script hiza-async&gt; </h3>
+                <h3> &lt;script hiza-*&gt; </h3>
                 <pre></pre>
             </div>
 
-            <div class="col-md-6 tutorial">
+            <div class="col-md-6 tutorial no_init">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    
+                    <template hiza>
+                        <script hiza-sync>
+                        </script>
+
+                    </template>
                 </div>
             </div>
         </div>
@@ -359,15 +375,16 @@ function on_load() {
         let result = row.querySelector('.result');
 
         if (!result) {
-            row.children[0].classList.replace('col-md-6', 'col-12');
-
             if (!pre.innerText) {
                 pre.innerText = ' ';
             }
         }
         else {
-
             pre.innerText = result.innerHTML.replaceAll('=""', '');
+        }
+
+        if (!result || result.classList.contains('d-none')) {
+            row.children[0].classList.replace('col-md-6', 'col-12');
         }
 
         pre.innerText = hiza.engine.decode(pre.innerText);
