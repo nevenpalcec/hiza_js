@@ -22,6 +22,7 @@
 
         .tutorial_row {
             border-bottom: 1px solid lightgray;
+            padding-bottom: 1rem;
             margin-bottom: 50px;
         }
 
@@ -41,6 +42,7 @@
             border-left: 4px solid #04AA6D;
             white-space: pre-wrap;
             word-wrap: break-word;
+            margin-bottom: 0;
         }
         .tutorial .result {
             padding: 5px;
@@ -368,6 +370,7 @@ function on_load() {
             pre.innerText = result.innerHTML.replaceAll('=""', '');
         }
 
+        pre.innerText = hiza.engine.decode(pre.innerText);
         pre.innerText = '\n    ' + pre.innerText.replaceAll(/\n                /g, '\n').trim() + '\n\n';
 
     });
