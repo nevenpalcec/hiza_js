@@ -27,7 +27,7 @@ hiza.engine = new function() {
     }
 
     // Decode chars such as &lt; to <
-    function decode(html) {
+    this.decode = function (html) {
         var txt = document.createElement("textarea");
         txt.innerHTML = html;
         return txt.value;
@@ -142,7 +142,7 @@ hiza.engine = new function() {
         // let script_scope_end = regx[1] == '<script>' ? get_script_end(html, script_start) : get_scope_end(html, script_scope_start);
         let script_scope_end = get_script_end(html, script_start);
         let scope_html = html.substring(script_scope_start + 1, script_scope_end);
-        scope_html = decode(scope_html);
+        scope_html = hiza.engine.decode(scope_html);
         let is_async = txt.includes('hiza-async') || txt.includes('hiza-defer');
 
         async function exec () {
@@ -181,7 +181,7 @@ hiza.engine = new function() {
         let _loop_var_ = condition.match(/(var|let) (\w+)/)[2];
 
         // Decode entities to text
-        condition = decode(condition);
+        condition = hiza.engine.decode(condition);
 
         let _for_start = regx['index'];
         let _for_scope_start = _for_start + txt.length - 1;
@@ -224,7 +224,7 @@ hiza.engine = new function() {
         let if_scope_end = get_scope_end(html, if_scope_start);
 
         // Decode entities to text
-        condition = decode(condition);
+        condition = hiza.engine.decode(condition);
 
         let global_else_if_end = if_scope_end + 1;
 
@@ -255,7 +255,7 @@ hiza.engine = new function() {
                 let _elseif_res = html_after.substring(_elseif_start, _elseif_end);
 
                 // Decode entities to text
-                let _elseif_condition = decode(else_if[2]);
+                let _elseif_condition = hiza.engine.decode(else_if[2]);
                 
                 // Decode entities to text
                 else_ifs.push({
@@ -360,6 +360,8 @@ hiza.engine = new function() {
         let scope = {
             'SELF': template,
         };
+
+        template.hiza.SCOPE = scope;
 
         if (destination) {
             destination = document.querySelector(destination);

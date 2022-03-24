@@ -9,6 +9,9 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- Hiža Engine -->
     <script>
         var DISABLE_HIZA_INIT = true;
@@ -16,6 +19,11 @@
     <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"></script>
 
     <style>
+
+        .tutorial_row {
+            border-bottom: 1px solid lightgray;
+            margin-bottom: 50px;
+        }
 
         .page_title {
             font-family: 'Courier New', Courier, monospace;
@@ -34,296 +42,297 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+        .tutorial .result {
+            padding: 5px;
+            border: 1px solid lightgray;
+            box-shadow: 3px 3px 3px gray;
+        }
     </style>
 </head>
 <body>
 
     <main class="container">
-        <class class="row">
 
+        <!-- Heading -->
+        <header class="row">
             <div class="col-12 pt-4">
                 <h1 class="page_title" onclick="window.open('https://github.com/nevenpalcec/hiza_js', '_blank');">hiza.engine</h1>
                 &nbsp;&nbsp;&nbsp;
                 <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo HTML</h1>
             </div>
-
+            
             <div class="col-md-6 mb-4">
                 <input id="tutorial_search" class="form-control" type="text" placeholder="Search tutorial...">
             </div>
             <div class="col"></div>
+        </header>
 
-            <div class="col-md-6 tutorial">
+        <!-- How to import -->
+        <div class="row tutorial_row">
+            <div class="col-md-12 tutorial">
                 <h3> Import </h3>
-                <pre id="tut_0">
-
-    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
+                <pre id="tut_import">
+                    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
                 </pre>
             </div>
+        </div>
 
+        <!-- Getting started -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Getting started </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> Result </h3>
+                <div class="result">
+                    <div id="container" style="padding: 15px"></div>
+
+                    <template id="templ_id" hiza data-dest="#container">
+                        Hello world!
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inline template (one-time) -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3>
+                    Inline template
+                </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        I am an inline template. <br>
+                        I get destroyed after building.
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insert variables -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3>
+                    Variables
+                </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <script>
+                        let example = 'Steve';
+                    </script>
+
+                    <template hiza>
+                        Hello ${ example } <br>
+                        This is an inline variable: ${ 3 == 3 ? 'Hello!' : 'Not found.' }
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- $if, $else if, $else -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Branching </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                    <template hiza>
+
+                        $if (3 == 2) {
+                            <h5> 3 == 2 </h5>
+                        }
+                        $else if (4 == 3) {
+                            <h5> 4 == 3 </h5>
+                        }
+                        $else {
+                            <h5> None of the conditions have been met. </h5>
+                        }
+
+                    </template>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- $for -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Looping </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+
+                        $for (let i = 0; i < 5; ++i) {
+                            <p> ${i} </p>
+                        }
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- DISABLE_HIZA_INIT -->
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> DISABLE_HIZA_INIT </h3>
-                <pre id="tut_disable_init">
-                </pre>
+                <pre></pre>
             </div>
-
 
             <div class="col-md-6 tutorial">
-                <h3> &lt;template hiza&gt; </h3>
-                <pre id="tut_1">
-                </pre>
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
             </div>
+        </div>
 
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> &lt;script hiza-async&gt; </h3>
-                <pre id="tut_2">
-                </pre>
+                <pre></pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> &lt;script hiza-defer&gt; </h3>
-                <pre id="tut_defer">
-                </pre>
+                <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
-                <h3> $if, $else if, $else </h3>
-                <pre id="tut_3">
-                </pre>
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
             </div>
+        </div>
 
-            <div class="col-md-6 tutorial">
-                <h3> $for (let idx ...) </h3>
-                <pre id="tut_4">
-                </pre>
-            </div>
-
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> $for (let ... of) </h3>
-                <pre id="tut_5">
-                </pre>
+                <pre></pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> Redraw - EL.hiza.run() </h3>
-                <pre id="tut_6">
-                </pre>
+                <pre></pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> Make one template - hiza.engine.init_one </h3>
-                <pre id="tut_7">
-                </pre>
+                <pre></pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> Make all templates - hiza.engine.init </h3>
-                <pre id="tut_8">
-                </pre>
+                <pre></pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> Clean draw </h3>
-                <pre id="tut_9">
-                </pre>
+                <pre></pre>
             </div>
 
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> data-interval </h3>
-                <pre id="tut_timeout">
-
-    Unfinished.
-                </pre>
+                <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
-                <h3> data-timeout </h3>
-                <pre id="tut_interval">
+                <h3> &nbsp; </h3>
+                <div class="result">
                     
-    Unfinished.
-                </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> data-timeout </h3>
+                <pre></pre>
             </div>
 
-        </class>
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    
+                </div>
+            </div>
+        </div>
+
     </main>
 
 <script>
-tut_1.innerText = '' + 
-`
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-        <!-- Code... -->
-    </template>
-
-    
-    ${'<'}script>
-
-        // Manual init
-        hiza.engine.init();
-    ${'<'}/script>
-\n`;
-tut_2.innerText = '' +
-`
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-        
-        ${'<'}script hiza-async>
-
-            /*
-                Keywords:
-                - SCOPE - template scope
-                - SCOPE.DEST - destination element
-            */
-           
-           // Using await blocks processing until script is finished
-           let objects = await fetch(...).then(res => res.json());
-
-           // Put variable on global scope
-           SCOPE['objects'] = objects;
-
-           // Log scope variables
-           console.log(SCOPE);
-        ${'<'}/script>
-
-    </template>
-\n`;
-tut_3.innerText = '' +
-`
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-        
-        ${'<'}script hiza-async>
-
-            // Show loading
-            SCOPE.DEST.innerHTML = 'Loading...';
-
-            // Dummy objects
-            SCOPE['objects'] = [1, 2, 3];
-        ${'<'}/script>
-
-        <!-- Use variable of SCOPE -->
-        $if (objects.length > 10) {
-
-            <span> Found a lot of objects </span>
-        }
-        $else if (objects.length > 5) {
-
-            <span> Found some objects </span>
-        }
-        $else {
-            
-            <!-- Print variable -->
-            Found \${ objects.length } objects.
-        }
-
-    </template>
-\n`;
-tut_4.innerText = '' +
-`
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-
-        $for (let i = 0; i < objects.length; ++i) {
-
-            <!-- Write objects -->
-            Objects \${i}: \${ objects[i] }
-            <br>
-        }
-
-    </template>
-\n`;
-tut_5.innerText = '' +
-`
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-
-        $for (let object of objects) {
-
-            <!-- Write objects -->
-            Object: \${ object }
-            <br>
-        }
-
-    </template>
-\n`;
-tut_6.innerText = '' +
-`
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-        <!-- Code... -->
-    </template>
-
-    <button onclick="redraw();"> Redraw </button>
-
-    ${'<'}script>
-
-        function redraw() {
-
-            let templ = document.getElementById('templ_id');
-            templ.hiza.run();
-        }
-    ${'<'}/script>
-\n`;
-tut_7.innerText = '' +
-`
-    <div id="container"></div>
-
-    <!-- Remove 'hiza' attribute to avoid automatic init -->
-    <template id="templ_id" data-dest="#container">
-        <!-- Code... -->
-    </template>
-
-    <button onclick="
-        hiza.engine.init_one(document.getElementById('templ_id'));
-        "> Draw template </button>
-\n`;
-tut_8.innerText = '' +
-`
-    <!--
-        By default, this is run at window.on_load
-        To disable it, put "DISABLE_HIZA_INIT = false"
-          before init
-    -->
-
-    <div id="container"></div>
-
-    <template id="templ_id" hiza data-dest="#container">
-        <!-- Code... -->
-    </template>
-
-    <!-- Draws all templates with 'hiza' attribute -->
-    <button onclick="hiza.engine.init();"> Draw all templates </button>
-\n`;
-tut_9.innerText = '' + 
-`
-    <div>
-        <!-- This replaces <template> with the result
-        <template hiza>
-            <!-- Code... -->
-        </template>
-    </div>
-\n`;
-tut_defer.innerText = '' + 
-`
-    <!-- Script that is run after rendering is finished. -->
-
-    Not yet implemented.
-\n`;
-tut_disable_init.innerText = '' +
-`
-    <!-- Disable hiza.engine.init() on page load -->
-    ${'<'}script>
-        var DISABLE_HIZA_INIT = true;
-    ${'<'}/script>
-
-    ${'<'}script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js">${'<'}/script>
-\n`;
-
 
 tutorial_search.onkeyup = function() {
 
@@ -339,6 +348,33 @@ tutorial_search.onkeyup = function() {
         }
     });
 };
+
+function on_load() {
+
+    document.querySelectorAll('.tutorial_row').forEach(row => {
+
+        let pre = row.querySelector('pre');
+        let result = row.querySelector('.result');
+
+        if (!result) {
+            row.children[0].classList.replace('col-md-6', 'col-12');
+
+            if (!pre.innerText) {
+                pre.innerText = ' ';
+            }
+        }
+        else {
+
+            pre.innerText = result.innerHTML.replaceAll('=""', '');
+        }
+
+        pre.innerText = '\n    ' + pre.innerText.replaceAll(/\n                /g, '\n').trim() + '\n\n';
+
+    });
+
+};
+
+on_load();
 
 </script>
 </body>
