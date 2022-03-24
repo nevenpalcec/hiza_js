@@ -350,7 +350,8 @@ hiza.engine = new function() {
     this.init_one = async function(template) {
 
         template.hiza = {
-            run: () => hiza.engine.init_one(template)
+            run: () => hiza.engine.init_one(template),
+            interval_tid: null
         };
 
         var config = {};
@@ -398,7 +399,9 @@ hiza.engine = new function() {
         }
         else if (isNaN(template.dataset.interval) == false) {
 
-            setInterval(build_and_deploy, template.dataset.timeout);
+            clearInterval(template.hiza.interval_tid);
+            template.hiza.interval_tid = setInterval(build_and_deploy, template.dataset.timeout);
+            
         }
         else {
             await build_and_deploy();
@@ -411,6 +414,17 @@ hiza.engine = new function() {
         document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
     }
 };
+
+// Set HIŽA namespace to template
+window.addEventListener('load', function() {
+
+    document.querySelectorAll('template[hiza]').forEach(template => {
+        console.log(template.id);
+        template.hiza = {
+            run: () => hiza.engine.init_one(template)
+        };
+    });
+});
 
 if (typeof DISABLE_HIZA_INIT === 'undefined' || DISABLE_HIZA_INIT !== true) {
     window.addEventListener('load', hiza.engine.init);

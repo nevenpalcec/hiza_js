@@ -16,7 +16,8 @@
     <script>
         var DISABLE_HIZA_INIT = true;
     </script>
-    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"></script> -->
+    <script src="./hiza.engine.js"></script>
 
     <style>
 
@@ -53,7 +54,7 @@
 </head>
 <body>
 
-    <main class="container">
+    <main class="container-fluid" style="padding: 0 100px;">
 
         <!-- Heading -->
         <header class="row">
@@ -206,9 +207,9 @@
                 <pre></pre>
             </div>
 
-            <div class="col-md-6 tutorial">
+            <div class="col-md-6 tutorial d-none">
                 <h3> &nbsp; </h3>
-                <div class="result d-none">
+                <div class="result">
 
                     <!-- Put before script import to disable automatic templating -->
                     <script>
@@ -218,19 +219,149 @@
             </div>
         </div>
 
+        <!-- <script hiza-*> -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> &lt;script hiza-*&gt; </h3>
                 <pre></pre>
             </div>
 
-            <div class="col-md-6 tutorial no_init">
+            <div class="col-md-6 tutorial d-none">
                 <h3> &nbsp; </h3>
                 <div class="result">
                     <template hiza>
                         <script hiza-sync>
+                            // Runs as sync function
                         </script>
 
+                        <script hiza-async>
+                            // Runs as async function (await allowed)
+                        </script>
+
+                        <script hiza-defer>
+                            // Runs after templating is finished
+                        </script>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCOPE keyword -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> SCOPE keyword </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+
+                        <script hiza-sync>
+                            let object_count = 13;
+
+                            // Save variable to scope
+                            SCOPE['obj_len'] = object_count;
+
+                            // Check console to see SCOPE variables
+                            console.log('Scope contains...');
+                            console.log(SCOPE);
+                        </script>
+
+                        <p>
+                            <!-- Use scope variable -->
+                            I have found ${obj_len} objects.
+                        </p>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual templating -->
+        <div class="row tutorial_row ignore-init">
+            <div class="col-md-6 tutorial">
+                <h3> Manual templating - hiza.engine.init_one </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <div class="mb-2">
+                        <button class="btn btn-success" onclick="qod_template.hiza.run()">Run (1)</button>
+
+                        <button class="btn btn-success" onclick="hiza.engine.init_one(qod_template)">Run (2)</button>
+                    </div>
+
+                    <h4 id="qod_container">
+                    </h4>
+
+                    <template id="qod_template" hiza data-dest="#qod_container">
+                        <script hiza-async>
+
+                            // Show loading
+                            SCOPE.DEST.innerText = 'Loading...';
+
+                            // Sleep to emphasize loading
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+
+                            // Fetch QOD from api
+                            let url = 'https://quotes.rest/qod';
+                            let qod = await fetch(url).then(res => res.json());
+
+                            // Store QOD to template scope
+                            SCOPE['qod'] = qod['contents']['quotes'][0]['quote'];
+                        </script>
+
+                        <p>
+                            ${ JSON.stringify(qod, null, 2) }
+                        </p>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- [data-interval] -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> [data-interval] </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <h4 id="clock"></h4>
+                    
+                    <!-- Run each second -->
+                    <template hiza data-dest="#clock" data-interval="1000">
+                        ${ new Date().toLocaleTimeString() }
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- [data-timeout] -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> [data-timeout] </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <div class="mb-2">
+                        <button class="btn btn-success"
+                            onclick="timeout_template.hiza.run()">Run with 1s delay</button>
+                    </div>
+
+                    <h4 id="timeout_container">
+                    </h4>
+
+                    <template id="timeout_template" hiza data-dest="#timeout_container" data-timeout="1000">
+                        ${ new Date().toLocaleTimeString() }
                     </template>
                 </div>
             </div>
@@ -238,112 +369,25 @@
 
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> &lt;script hiza-defer&gt; </h3>
+                <h3> SCOPE.DEST </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
+                    <p id="dest_example"></p>
+
+                    <template hiza data-dest="#dest_example">
                     
-                </div>
-            </div>
-        </div>
+                        Hello <span class="make_underline">world</span>!
 
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> $for (let ... of) </h3>
-                <pre></pre>
-            </div>
+                        <script hiza-defer>
+                            let span_underline = SCOPE.DEST.querySelector('.make_underline');
 
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> Redraw - EL.hiza.run() </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> Make one template - hiza.engine.init_one </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> Make all templates - hiza.engine.init </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> Clean draw </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> data-interval </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
-                </div>
-            </div>
-        </div>
-
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> data-timeout </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    
+                            span_underline.style.textDecoration = 'underline';
+                        </script>
+                    </template>
                 </div>
             </div>
         </div>
@@ -383,13 +427,16 @@ function on_load() {
             pre.innerText = result.innerHTML.replaceAll('=""', '');
         }
 
-        if (!result || result.classList.contains('d-none')) {
+        if (row.children[1]?.classList.contains('d-none')) {
             row.children[0].classList.replace('col-md-6', 'col-12');
         }
 
         pre.innerText = hiza.engine.decode(pre.innerText);
         pre.innerText = '\n    ' + pre.innerText.replaceAll(/\n                /g, '\n').trim() + '\n\n';
 
+        if (row.classList.contains('ignore-init') == false) {
+            row.querySelectorAll('[hiza]').forEach(hiza.engine.init_one);
+        }
     });
 
 };
