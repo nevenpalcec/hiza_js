@@ -56,14 +56,16 @@
                 <h3> Import </h3>
                 <pre id="tut_0">
 
-    &lt;!-- Disable automatic init() --&gt;
-    &lt;script&gt;
-        var DISABLE_HIZA_INIT = true;
-    &lt;/script&gt;
-
     &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
                 </pre>
             </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> DISABLE_HIZA_INIT </h3>
+                <pre id="tut_disable_init">
+                </pre>
+            </div>
+
 
             <div class="col-md-6 tutorial">
                 <h3> &lt;template hiza&gt; </h3>
@@ -136,6 +138,13 @@ tut_1.innerText = '' +
     <template id="templ_id" hiza data-dest="#container">
         <!-- Code... -->
     </template>
+
+    
+    ${'<'}script>
+
+        // Manual init
+        hiza.engine.init();
+    ${'<'}/script>
 \n`;
 tut_2.innerText = '' +
 `
@@ -288,6 +297,15 @@ tut_defer.innerText = '' +
     <!-- Script that is run after rendering is finished. -->
 
     Not yet implemented.
+\n`;
+tut_disable_init.innerText = '' +
+`
+    <!-- Disable hiza.engine.init() on page load -->
+    ${'<'}script>
+        var DISABLE_HIZA_INIT = true;
+    ${'<'}/script>
+
+    ${'<'}script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js">${'<'}/script>
 \n`;
 
 
