@@ -1,3 +1,4 @@
+// Version: 2022-03-24
 
 if (typeof hiza === 'undefined') {
     hiza = {};
@@ -5,81 +6,7 @@ if (typeof hiza === 'undefined') {
 
 hiza.engine = new function() {
 
-    this.ver = '2022-03-05';
-
-    // Used to convert strings to literal chars,
-    // e.g.  hiza.engine._lit`encoded newline: \n`
-    this._lit = function(str) {
-        return str.raw[0];
-    }
-
-    /*
-        Extract data:
-        -
-        -
-        ...
-    */
-    function extract_regex_data(html, regx) {
-
-        let condition = regx[4];
-        if (condition) {
-            condition = condition.slice(1, -1);
-        }
-
-        let mag = {
-            'expr': regx[1],
-            'script_attr': regx[2],
-            'keyword': regx[3],
-            'condition': condition,
-            'start': regx['index'],
-            'scope_start': regx['index'] + regx[0].length - 1,
-            'is_async': (regx[2] == 'async' || regx[2] == 'defer')
-        };
-
-        // Find script end
-        if (typeof mag.keyword !== 'undefined') {
-            
-            mag['scope_end'] = get_scope_end(html, mag['scope_start']);
-        }
-        else if (typeof mag.script_attr !== 'undefined') {
-            mag['scope_end'] = get_script_end(html, mag['scope_start']);
-        }
-        else {
-            // Odd behaviour - regx should either catch script or $keyword
-            throw new Error('Unexpected error.');
-        }
-
-        // Get text between scope start and end
-        mag['scope_html'] = html.substring(mag['scope_start'] + 1, mag['scope_end']);
-        mag['condition'] = hiza.engine.decode(mag['condition']);
-
-        return mag;
-    }
-
-    function replace_substring(text, start_idx, end_idx, replacement) {
-        return text.substring(0, start_idx) + replacement + text.substring(end_idx);
-    }
-
-    function make_regexp(raw_reg = [], prn_reg = []) {
-
-        if (raw_reg.length + prn_reg.length == 0) {
-            throw Error('Invalid call of make_regexp');
-        }
-
-        let mag_prn_arg = hiza.engine._lit`\s*(|\([^{]*\))`;
-        let mag_parentheses = hiza.engine._lit`\$(`
-            + prn_reg.join('|') + ')'
-            + mag_prn_arg
-            + hiza.engine._lit`\s*\{`;
-
-        let magic_regex = new RegExp(
-            '('
-            + raw_reg.join('|') + '|'
-            + mag_parentheses
-            + ')'
-        );
-        return magic_regex;
-    }
+    this.ver = '2022-03-24';
 
     function check_illegal(html) {
 
@@ -105,21 +32,8 @@ hiza.engine = new function() {
     // Decode chars such as &lt; to <
     this.decode = function (html) {
         var txt = document.createElement("textarea");
-        txt.innerHTML = html || '';
+        txt.innerHTML = html;
         return txt.value;
-    }
-
-    // Encode chars such as < to &lt;
-    this.encode = function(html) {
-        var div = document.createElement('div');
-        div.innerText = html;
-        return div.innerHTML;
-    }
-
-    this.innertext = function(html) {
-        var div = document.createElement('div');
-        div.innerHTML = html;
-        return div.innerText;
     }
 
     function remove_comments(html) {
@@ -198,7 +112,7 @@ hiza.engine = new function() {
             }
 
             if (txt[i] == '{') {
-                openings.push(i);
+                openings.unshift(i);
             }
             else if (txt[i] == '}') {
 
@@ -220,39 +134,62 @@ hiza.engine = new function() {
         return scope_end;
     }
 
-    async function process_script(html, mag, variables, config) {
+    async function process_script(html, regx, variables, config) {
 
-        // mag['scope_html'] = hiza.engine.decode(mag['scope_html']);
+        let txt = regx[0];
+        // let scope_name = regx[4];
+        let scope_name = 'SCOPE';
+
+        let script_start = regx['index'];
+        let script_scope_start = script_start + txt.length - 1;
+        // let script_scope_end = regx[1] == '<script>' ? get_script_end(html, script_start) : get_scope_end(html, script_scope_start);
+        let script_scope_end = get_script_end(html, script_start);
+        let scope_html = html.substring(script_scope_start + 1, script_scope_end);
+        scope_html = hiza.engine.decode(scope_html);
+        let is_async = txt.includes('hiza-async') || txt.includes('hiza-defer');
 
         async function exec () {
 
             let prom = exec_script_scope(`
-                ${mag['is_async'] ? 'async' : ''} function _hiza_script_() {
-                    ${mag['scope_html']}
+                ${is_async ? 'async' : ''} function __f__() {
+                    ${scope_html}
                 }
-                _hiza_script_()
-            `, 'SCOPE', variables);
+                __f__()
+            `, scope_name, variables);
 
-            if (mag['is_async']) {
+            if (is_async) {
                 await prom;
             }
         }
 
-        if (mag['script_attr'] == 'defer') {
+        if (txt.includes('hiza-defer')) {
 
+            if (!config['defer']) {
+                config['defer'] = [];
+            }
             config['defer'].push(exec);
         }
         else {
             await exec();
         }
 
-        return replace_substring(html, mag['start'], mag['scope_end'] + '</script>'.length, '');
-        // return html.substring(0, script_start) + html.substring(script_scope_end + 1);
+        script_scope_end += '</script>'.length - 1;
+        return html.substring(0, script_start) + html.substring(script_scope_end + 1);
     }
 
-    async function process_for(html, mag, variables) {
+    async function process_for(html, regx, variables) {
 
-        let _loop_var_ = mag['condition'].match(/(var |let |)\s*(\w+)/)[2];
+        let txt = regx[0];
+        let condition = regx[4];
+        let _loop_var_ = condition.match(/(var|let) (\w+)/)[2];
+
+        // Decode entities to text
+        condition = hiza.engine.decode(condition);
+
+        let _for_start = regx['index'];
+        let _for_scope_start = _for_start + txt.length - 1;
+        let _for_scope_end = get_scope_end(html, _for_scope_start);
+        let scope_html = html.substring(_for_scope_start + 1, _for_scope_end);
 
         let result = await exec_js(`
 
@@ -261,7 +198,7 @@ hiza.engine = new function() {
                 let result = '';
                 eval(scope_vars_js('variables', variables));
     
-                for (${mag['condition']}) {
+                for (${condition}) {
                     let variables_copy = {
                         ...variables,
                         '${_loop_var_}': ${_loop_var_}
@@ -274,21 +211,30 @@ hiza.engine = new function() {
             __f__()
         `, {
             'variables': variables,
-            'scope_html': mag['scope_html']
+            'scope_html': scope_html
         });
 
-        return replace_substring(html, mag['start'], mag['scope_end'] + 1, result);
-        // return html.substring(0, mag['start']) + result + html.substring(mag['scope_end'] + 1);
+        html = html.substring(0, _for_start) + result + html.substring(_for_scope_end + 1);
+        return html;
     }
 
-    function process_if(html, mag, variables) {
+    function process_if(html, regx, variables) {
 
-        let global_else_if_end = mag['scope_end'] + 1;
+        let txt = regx[0];
+        let condition = regx[3];
+        let _if_start = regx['index'];
+        let if_scope_start = _if_start + txt.length - 1;
+        let if_scope_end = get_scope_end(html, if_scope_start);
+
+        // Decode entities to text
+        condition = hiza.engine.decode(condition);
+
+        let global_else_if_end = if_scope_end + 1;
 
         // Try to find else ifs
         let else_ifs = [];
         let _else_result = null;
-        let html_after = html.substring(mag['scope_end']);
+        let html_after = html.substring(if_scope_end);
         let else_if_regex = /^\}\s*\$(else\s+if|else)(\s*\([^{]+\)|\s*)\s*\{/;
 
         for (let else_if = html_after.match(else_if_regex); !!else_if == true; else_if = html_after.match(else_if_regex)) {
@@ -332,8 +278,8 @@ hiza.engine = new function() {
 
         let result = '';
 
-        if (exec_js(mag['condition'], variables)) {
-            result = html.substring(mag['scope_start'] + 1, mag['scope_end']);
+        if (exec_js(condition, variables)) {
+            result = html.substring(if_scope_start + 1, if_scope_end);
         }
         else {
             let condition_found = false;
@@ -352,108 +298,53 @@ hiza.engine = new function() {
             }
         }
 
-        return replace_substring(html, mag['start'], global_else_if_end + 1, result);
-        // return html.substring(0, mag['start']) + result + html.substring(global_else_if_end + 1);
-    }
+        html = html.substring(0, _if_start) + result + html.substring(global_else_if_end + 1);
 
-    // $decode {}
-    function process_decode(html, mag, variables) {
-
-        let data = exec_scope(mag['scope_html'], variables)
-        let decoded = hiza.engine.decode(data);
-        return replace_substring(html, mag['start'], mag['scope_end'] + 1, decoded);
-    }
-
-    // $encode {}
-    function process_encode(html, mag, variables) {
-
-        let data = exec_scope(mag['scope_html'], variables);
-        let encoded = hiza.engine.encode(data);
-        let res_html = replace_substring(html, mag['start'], mag['scope_end'] + 1, encoded);
-
-        return res_html.replaceAll('\n', ' ');
-    }
-
-    // $innertext {}
-    function process_innertext(html, mag, variables) {
-
-        let data = exec_scope(mag['scope_html'], variables);
-        let innertext = hiza.engine.innertext(data);
-        return replace_substring(html, mag['start'], mag['scope_end'] + 1, innertext);
+        return html;
     }
 
     this.build = async function (html, variables, config = {}) {
-        
+
         if (typeof variables === 'undefined') {
             variables = {};
         }
-        
+
         // Check for illegal commands or unsupported features
         check_illegal(html);
         
         // Remove comments
         html = remove_comments(html);
-        
-        // Remove ="" from script
-        html = html.replaceAll(/<script hiza-(a?sync|defer)=?(""|''|)>/g, '<script hiza-$1>');
-        
-        // Make regex to catch magic
-        let mag_raw = [
-            '<script hiza-(a?sync|defer)>',
-        ];
-        let mag_prn = [
-            'if',
-            'for',
-            'decode',
-            'encode',
-            'innertext',
-            'json'
-        ];
-        let magic_regex = make_regexp(mag_raw, mag_prn);
-        
+
+        html = html.replaceAll(/<script hiza-sync=?(""|''|)>/g, '<script hiza-sync>');
+        html = html.replaceAll(/<script hiza-async=?(""|''|)>/g, '<script hiza-async>');
+        html = html.replaceAll(/<script hiza-defer=?(""|''|)>/g, '<script hiza-defer>');
+        // html = html.replaceAll('<script hiza-async="">', '<script>');
+
+        // // Convert chars such as &lt; to <
+        // html = decode(html);
+
         let max_magic = 100000;
+
         while (--max_magic) {
 
-            // Try to find raw patterns or $keywords
-            let magic = html.match(magic_regex);
-            // /(<script hiza-(a?sync|defer)>|\$(if|for)\s*(|\([^{]*\))\s*\{)/
+            // Try to find: <script>, $if, $for
+            let magic = html.match(/(<script hiza-sync>|<script hiza-async>|<script hiza-defer>|\$(if|for)\s*(\(([^{]+)\)|)\s*\{)/);
+            // Try to find: <script>, $if, $for, $script, $script(SCOPE_NAME)
+            // let magic = html.match(/(<script>|\$(if|for|script)\s*(\(([^)]+)\)|)\s*\{)/);
 
             if (!magic) {
                 break;
             }
 
-            // Extract data from regex result
-            let mag = extract_regex_data(html, magic);
-
-            if (mag.keyword == 'if') {
-                html = process_if(html, mag, variables);
+            if (magic[2] == 'if') {
+                html = process_if(html, magic, variables);
             }
-            else if (mag.keyword == 'for') {
-                html = await process_for(html, mag, variables);
+            else if (magic[2] == 'for') {
+                html = await process_for(html, magic, variables);
             }
-            else if (mag.keyword == 'decode') {
-                html = process_decode(html, mag, variables);
+            else if (magic[1].match(/<script hiza-(a?sync|defer)>/)) {
+                html = await process_script(html, magic, variables, config);
             }
-            else if (mag.keyword == 'encode') {
-                html = process_encode(html, mag, variables);
-            }
-            else if (mag.keyword == 'innertext') {
-                html = process_innertext(html, mag, variables);
-            }
-            // else if (mag.keyword == 'json') {
-            //     html = process_json(html, mag, variables);
-            // }
-            else if (typeof mag.script_attr !== 'undefined') {
-                html = await process_script(html, mag, variables, config);
-            }
-            else {
-                console.warn('HIŽA: Keyword not implemented: $' + mag.keyword + '. Removing...');
-                html = replace_substring(html, mag['start'], mag['scope_end'] + 1, '');
-            }
-        }
-
-        if (max_magic == 0) {
-            throw new Error('You have reached limit of one template: 100 000 expressions.');
         }
 
         return exec_scope(html, variables);
@@ -463,13 +354,10 @@ hiza.engine = new function() {
 
         template.hiza = {
             run: () => hiza.engine.init_one(template),
-            interval_tid: null,
-            timeout_tid: null
+            interval_tid: null
         };
 
-        var config = {
-            'defer': []
-        };
+        var config = {};
 
         // Find [data-dest]
         let destination = template.dataset['dest'];
@@ -498,29 +386,24 @@ hiza.engine = new function() {
             }
 
             // Run defer scripts
-            for (let i = 0; i < config['defer'].length; ++i) {
-                await config['defer'][i]();
+            if (config['defer']) {
+
+                let defer_scripts = config['defer'];
+
+                for (let i = 0; i < defer_scripts.length; ++i) {
+                    await defer_scripts[i]();
+                }
             }
         }
 
         if (isNaN(template.dataset.timeout) == false) {
 
-            template.hiza.timeout_tid = setTimeout(build_and_deploy, template.dataset.timeout);
+            setTimeout(build_and_deploy, template.dataset.timeout);
         }
         else if (isNaN(template.dataset.interval) == false) {
 
             clearInterval(template.hiza.interval_tid);
-            template.hiza.interval_tid = setInterval(async function() {
-                
-                try {
-                    await build_and_deploy();
-                }
-                catch (err) {
-                    console.error(err);
-                    console.log('Error found. Stopping interval...');
-                    clearInterval(template.hiza.interval_tid);
-                }
-            }, template.dataset.interval);
+            template.hiza.interval_tid = setInterval(build_and_deploy, template.dataset.timeout);
             
         }
         else {

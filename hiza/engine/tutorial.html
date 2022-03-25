@@ -16,7 +16,7 @@
     <script>
         var DISABLE_HIZA_INIT = true;
     </script>
-    <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine.js"></script> -->
     <script src="./hiza.engine.js"></script>
 
     <style>
@@ -71,12 +71,20 @@
         </header>
 
         <!-- How to import -->
-        <div class="row tutorial_row">
+        <div class="row tutorial_row force_init">
             <div class="col-md-12 tutorial">
                 <h3> Import </h3>
-                <pre id="tut_import">
-                    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
-                </pre>
+                <template hiza>
+                    <pre>
+                        $encode {
+    ${'<'}!-- Get latest version --${'>'}
+    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine.js"></script>
+
+    ${'<'}!-- Get stable version --${'>'}
+    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine-lts.js"></script>
+                        }
+                    </pre>
+                </template>
             </div>
         </div>
 
@@ -367,6 +375,7 @@
             </div>
         </div>
 
+        <!-- SCOPE.DEST -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3> SCOPE.DEST </h3>
@@ -392,6 +401,111 @@
             </div>
         </div>
 
+        <!-- $encode -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> $encode </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        <h1>Hello</h1>
+                        
+                        <span style="display: inline;">
+                            $encode {
+                                <h1>Hello</h1>
+                            }
+                        </span>
+
+                        <br>
+                        <u>Note</u>: HTML in scope must not contain "block" elements.<br>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- $decode -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> $decode </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        
+                        $decode {
+                            This is an ampersand: &amp;amp;
+                        }
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- $json -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> $json <span class="text-danger">(not implemented)</span> </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        <!-- Raw -->
+                        $json {
+                            {
+                                'a': 3,
+                                'b': 4
+                            }
+                        }
+
+                        <script hiza-sync>
+                            let obj_arr_local = ['name1', 'name2', 'name3'];
+                            SCOPE['obj_arr'] = obj_arr_local;
+                        </script>
+
+                        <!-- Use object in scope -->
+                        $json {
+                            obj_arr
+                        }
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- $innertext -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> $innertext </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        $innertext {
+                            <div>
+                                <p>
+                                    Hey!
+                                </p>
+                                <p>
+                                    I am in another paragraph.
+                                </p>
+                            </div>
+                        }
+                    </template>
+                </div>
+            </div>
+        </div>
+
     </main>
 
 <script>
@@ -411,9 +525,17 @@ tutorial_search.onkeyup = function() {
     });
 };
 
-function on_load() {
+async function copy(test) {
+    await navigator.clipboard.writeText(text);
+}
 
-    document.querySelectorAll('.tutorial_row').forEach(row => {
+async function on_load() {
+
+    for (let templ of document.querySelectorAll('.force_init [hiza]')) {
+        await hiza.engine.init_one(templ);
+    }
+
+    for (let row of document.querySelectorAll('.tutorial_row')) {
 
         let pre = row.querySelector('pre');
         let result = row.querySelector('.result');
@@ -435,9 +557,12 @@ function on_load() {
         pre.innerText = '\n    ' + pre.innerText.replaceAll(/\n                /g, '\n').trim() + '\n\n';
 
         if (row.classList.contains('ignore-init') == false) {
-            row.querySelectorAll('[hiza]').forEach(hiza.engine.init_one);
+            
+            for (let templ of row.querySelectorAll('[hiza]')) {
+                await hiza.engine.init_one(templ);
+            }
         }
-    });
+    }
 
 };
 
