@@ -19,9 +19,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- highlight.js -->
-    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/default.min.css"> -->
-    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/androidstudio.min.css"> -->
-    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/vs2015.min.css"> -->
     <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css">
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js"></script>
 
@@ -43,8 +40,11 @@
         .page_title {
             font-family: 'Courier New', Courier, monospace;
             display: inline-block;
-            text-decoration: underline;
             cursor: pointer;
+        }
+
+        .page_title:hover {
+            text-decoration: underline;
         }
 
         .page_title_sub {
@@ -88,7 +88,7 @@
         <!-- Heading -->
         <header class="row">
             <div class="col-12 pt-4">
-                <h1 class="page_title" onclick="window.open('https://github.com/nevenpalcec/hiza_js', '_blank');">hiza.engine</h1>
+                <h1 class="page_title" onclick="window.open('https://github.com/nevenpalcec/hiza_js', '_blank');" style="color: #e06c75;">&lt;hiža&gt;</h1>
                 &nbsp;&nbsp;&nbsp;
                 <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo</h1>
                 &nbsp;&nbsp;&nbsp;
@@ -232,6 +232,12 @@
                 <div class="result">
                     <script>
                         let numbers = [1, 2, 3];
+                        if (3 < 2) {
+
+                        }
+                        for (let i = 0; i < numbers.length; ++i) {
+
+                        }
                     </script>
 
                     <template hiza>
@@ -240,7 +246,7 @@
                             }
 
                             <br>
-                            $for(let num of numbers) {
+                            $for (let num of numbers) {
                                 <span> ${ num } </span>
                             }
                     </template>
@@ -603,10 +609,40 @@ function raw(str) {
 
 function apply_custom_color(code) {
 
-    code = code.replace(/(\$(formatted|for|innertext|if|else if|else|json))/g, '<strong class="hljs-keyword">$1</strong>');
-    code = code.replace(/(\$)\{/g, '<strong class="hljs-keyword">$1</strong>{');
+    // function endf(r) {
+    //     let t = r['input'];
+    //     let count = 0;
+    //     for (let i = r['index'] + r[0].length - 1; i < t.length; ++i) {
+    //         if (t[i] == '{') ++count;
+    //         else if (t[i] == '}') --count;
+    //         if (count == 0) {
+    //             return i;
+    //         }
+    //     }
+    // }
 
-    // code = code.replace(regx, '<strong class="hljs-keyword">$1</strong>$3<strong class="hljs-keyword">{</strong>');
+    // var st = t => '<strong class="hljs-keyword">' + t + '</strong>';
+    // var sp = t => '<span class="hljs-keyword">' + t + '</span>';
+
+    // let kw = [
+    //         'if',
+    //         'for',
+    //         'decode',
+    //         'encode',
+    //         'innertext',
+    //         'json',
+    //         'formatted'
+    //     ];
+
+    // let reg = new RegExp(
+    //     raw`(\$(if|else if|else|for))([^{]*)\{`
+    // );
+    // let m = code.match(reg);
+    
+    // if (m) {
+    //     let end = endf(m);
+    //     code = code.substring(0, end) + st('}') + code.substring(end + 1);
+    // }
 
     return code;
 }
