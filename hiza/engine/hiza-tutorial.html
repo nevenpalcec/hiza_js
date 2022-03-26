@@ -1,4 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 
     <!-- favicon -->
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/favicon.png">
@@ -11,6 +17,13 @@
 
     <!-- Font awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- highlight.js -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/default.min.css"> -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/androidstudio.min.css"> -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/vs2015.min.css"> -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js"></script>
 
     <!-- Hiža Engine -->
     <script>
@@ -84,13 +97,15 @@
                 <h3> Import </h3>
                 <template hiza>
                     <pre>
-                        $encode {
-    ${'<'}!-- Get latest version --${'>'}
-    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine.js"></script>
-
-    ${'<'}!-- Get stable version --${'>'}
-    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine-lts.js"></script>
-                        }
+                        <code class="language-html">
+                            $encode {
+                            ${'<'}!-- Get latest version --${'>'}
+                    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine.js"></script>
+                    
+                    ${'<'}!-- Get stable version --${'>'}
+                    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@latest/hiza/engine/hiza.engine-lts.js"></script>
+                            }
+                        </code>
                     </pre>
                 </template>
             </div>
@@ -537,6 +552,20 @@ async function copy(test) {
     await navigator.clipboard.writeText(text);
 }
 
+function raw(str) {
+    return str.raw[0]
+}
+
+function apply_custom_color(code) {
+
+    code = code.replace(/(\$(for|if|else if|else))/g, '<strong class="hljs-keyword">$1</strong>');
+    code = code.replace(/(\$)\{/g, '<strong class="hljs-keyword">$1</strong>{');
+
+    // code = code.replace(regx, '<strong class="hljs-keyword">$1</strong>$3<strong class="hljs-keyword">{</strong>');
+
+    return code;
+}
+
 async function on_load() {
 
     for (let templ of document.querySelectorAll('.force_init [hiza]')) {
@@ -557,9 +586,6 @@ async function on_load() {
             pre.innerText = result.innerHTML.replaceAll('=""', '');
         }
 
-        if (row.children[1]?.classList.contains('d-none')) {
-            row.children[0].classList.replace('col-md-6', 'col-12');
-        }
 
         pre.innerText = hiza.engine.decode(pre.innerText);
         pre.innerText = '\n    ' + pre.innerText.replaceAll(/\n                /g, '\n').trim() + '\n\n';
@@ -570,6 +596,15 @@ async function on_load() {
                 await hiza.engine.init_one(templ);
             }
         }
+    }
+
+    for (let pre of document.querySelectorAll('.tutorial_row pre')) {
+
+        let highlighted = hljs.highlightAuto(pre.innerText).value;
+        pre.innerHTML = `<code class="language-html">${highlighted}</code>`;
+        hljs.highlightElement(pre.children[0]);
+
+        pre.children[0].innerHTML = apply_custom_color(pre.children[0].innerHTML);
     }
 
 };
