@@ -92,7 +92,14 @@
                 &nbsp;&nbsp;&nbsp;
                 <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo</h1>
                 &nbsp;&nbsp;&nbsp;
-                <h1 class="page_title_sub">Ver_2021-03-25</h1>
+                <h1 class="page_title_sub">
+                    <template id="ver_templ">
+                        Ver_${ hiza.engine.ver }
+                    </template>
+                    <script>
+                        hiza.engine.init_one(ver_templ);
+                    </script>
+                </h1>
             </div>
             
             <div class="col-md-6 mb-4">
