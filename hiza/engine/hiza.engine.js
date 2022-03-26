@@ -19,7 +19,7 @@ hiza.engine = new function() {
         -
         ...
     */
-    function extract_regex_data(html, regx) {
+    function extract_regex_data(regx) {
 
         let condition = regx[4];
         if (condition) {
@@ -39,10 +39,10 @@ hiza.engine = new function() {
         // Find script end
         if (typeof mag.keyword !== 'undefined') {
             
-            mag['scope_end'] = get_scope_end(html, mag['scope_start']);
+            mag['scope_end'] = get_scope_end(regx['input'], mag['scope_start']);
         }
         else if (typeof mag.script_attr !== 'undefined') {
-            mag['scope_end'] = get_script_end(html, mag['scope_start']);
+            mag['scope_end'] = get_script_end(regx['input'], mag['scope_start']);
         }
         else {
             // Odd behaviour - regx should either catch script or $keyword
@@ -50,7 +50,7 @@ hiza.engine = new function() {
         }
 
         // Get text between scope start and end
-        mag['scope_html'] = html.substring(mag['scope_start'] + 1, mag['scope_end']);
+        mag['scope_html'] = regx['input'].substring(mag['scope_start'] + 1, mag['scope_end']);
         mag['condition'] = hiza.engine.decode(mag['condition']);
 
         return mag;
@@ -423,7 +423,7 @@ hiza.engine = new function() {
             }
 
             // Extract data from regex result
-            let mag = extract_regex_data(html, magic);
+            let mag = extract_regex_data(magic);
 
             if (mag.keyword == 'if') {
                 html = process_if(html, mag, variables);
