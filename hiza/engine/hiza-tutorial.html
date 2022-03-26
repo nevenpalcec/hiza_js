@@ -609,41 +609,10 @@ function raw(str) {
 
 function apply_custom_color(code) {
 
-    // function endf(r) {
-    //     let t = r['input'];
-    //     let count = 0;
-    //     for (let i = r['index'] + r[0].length - 1; i < t.length; ++i) {
-    //         if (t[i] == '{') ++count;
-    //         else if (t[i] == '}') --count;
-    //         if (count == 0) {
-    //             return i;
-    //         }
-    //     }
-    // }
-
-    // var st = t => '<strong class="hljs-keyword">' + t + '</strong>';
-    // var sp = t => '<span class="hljs-keyword">' + t + '</span>';
-
-    // let kw = [
-    //         'if',
-    //         'for',
-    //         'decode',
-    //         'encode',
-    //         'innertext',
-    //         'json',
-    //         'formatted'
-    //     ];
-
-    // let reg = new RegExp(
-    //     raw`(\$(if|else if|else|for))([^{]*)\{`
-    // );
-    // let m = code.match(reg);
-    
-    // if (m) {
-    //     let end = endf(m);
-    //     code = code.substring(0, end) + st('}') + code.substring(end + 1);
-    // }
-
+    code = code.replace(/(\$(formatted|for|innertext|if|else if|else|json))/g,
+        '<strong class="hljs-keyword">$1</strong>');
+        
+    code = code.replace(/(\$)\{/g, '<strong class="hljs-keyword">$1</strong>{');
     return code;
 }
 
