@@ -50,7 +50,7 @@
         .page_title_sub {
             font-family: 'Courier New', Courier, monospace;
             display: inline-block;
-            text-decoration: underline;
+            /* text-decoration: underline; */
         }
 
         .tutorial {
@@ -67,7 +67,17 @@
         .tutorial .result {
             padding: 5px;
             border: 1px solid lightgray;
-            box-shadow: 3px 3px 3px gray;
+            /* box-shadow: 3px 3px 3px gray; */
+            word-wrap: break-word;
+        }
+        .tutorial .result::before {
+            content: '<html>';
+            display: block;
+            color: #e06c75;
+            font-size: 1.3rem;
+            border-bottom: 1px solid lightgray;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -80,9 +90,9 @@
             <div class="col-12 pt-4">
                 <h1 class="page_title" onclick="window.open('https://github.com/nevenpalcec/hiza_js', '_blank');">hiza.engine</h1>
                 &nbsp;&nbsp;&nbsp;
-                <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo HTML</h1>
+                <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo</h1>
                 &nbsp;&nbsp;&nbsp;
-                <h1 class="page_title_sub">Ver: 2021-03-25</h1>
+                <h1 class="page_title_sub">Ver_2021-03-25</h1>
             </div>
             
             <div class="col-md-6 mb-4">
@@ -119,9 +129,9 @@
             </div>
 
             <div class="col-md-6 tutorial">
-                <h3> Result </h3>
+                <h3> &nbsp; </h3>
                 <div class="result">
-                    <div id="container" style="padding: 15px"></div>
+                    <div id="container"></div>
 
                     <template id="templ_id" hiza data-dest="#container">
                         Hello world!
@@ -309,44 +319,68 @@
             </div>
         </div>
 
-        <!-- Manual templating -->
-        <div class="row tutorial_row ignore-init">
+        <!-- GLOBAL keyword -->
+        <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Manual templating - hiza.engine.init_one </h3>
+                <h3> GLOBAL keyword </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <div class="mb-2">
-                        <button class="btn btn-success" onclick="qod_template.hiza.run()">Run (1)</button>
+                    <!-- First template -->
+                    <template hiza>
+                        <script hiza-sync>
+                            let data = 'I can be used globally';
+                            GLOBAL['data'] = data;
+                        </script>
 
-                        <button class="btn btn-success" onclick="hiza.engine.init_one(qod_template)">Run (2)</button>
+                        Saving <em>${ GLOBAL['data'] }</em>...
+                    </template>
+                    <hr>
+
+                    <!-- Second template -->
+                    <template hiza>
+                        I have found this text: <em>${ GLOBAL['data'] }</em>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual templating -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Manual - &lt;template&gt;.hiza.run() </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <div class="mb-4">
+                        <button class="btn btn-success w-100" onclick="cat_template.hiza.run()">Run</button>
                     </div>
 
-                    <h4 id="qod_container">
+                    <h4 id="cat_container" class="text-center">
+                        <!-- Template result goes here -->
                     </h4>
 
-                    <template id="qod_template" hiza data-dest="#qod_container">
+                    <template id="cat_template" hiza data-dest="#cat_container">
                         <script hiza-async>
 
                             // Show loading
-                            SCOPE.DEST.innerText = 'Loading...';
+                            SCOPE.DEST.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
 
-                            // Sleep to emphasize loading
-                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            // Fetch example api
+                            let res = await fetch('https://catfact.ninja/fact').then(res => res.json());
 
-                            // Fetch QOD from api
-                            let url = 'https://quotes.rest/qod';
-                            let qod = await fetch(url).then(res => res.json());
-
-                            // Store QOD to template scope
-                            SCOPE['qod'] = qod['contents']['quotes'][0]['quote'];
+                            // Store globally
+                            GLOBAL['cat_fact'] = res;
                         </script>
 
                         <p>
-                            ${ JSON.stringify(qod, null, 2) }
+                            ${ GLOBAL['cat_fact']['fact'] }
                         </p>
                     </template>
                 </div>
@@ -414,9 +448,11 @@
                     
                         Hello <span class="make_underline">world</span>!
 
+                        <!-- Run script after templating -->
                         <script hiza-defer>
-                            let span_underline = SCOPE.DEST.querySelector('.make_underline');
 
+                            // Apply style to .make_underline
+                            let span_underline = SCOPE.DEST.querySelector('.make_underline');
                             span_underline.style.textDecoration = 'underline';
                         </script>
                     </template>
@@ -437,14 +473,12 @@
                     <template hiza>
                         <h1>Hello</h1>
                         
-                        <span style="display: inline;">
-                            $encode {
-                                <h1>Hello</h1>
-                            }
-                        </span>
+                        $encode {
+                            <h1>Hello</h1>
+                        }
 
                         <br>
-                        <u>Note</u>: HTML in scope must not contain "block" elements.<br>
+                        <u>Note</u>: You must follow HTML rules to avoid incorrect encoding.<br>
                     </template>
                 </div>
             </div>
@@ -473,31 +507,35 @@
         <!-- $json -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> $json <span class="text-danger">(not implemented)</span> </h3>
+                <h3> JSON - $json, $formatted </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <template hiza>
+                    <!-- Check if new 'cat_fact' loaded every 1000ms -->
+                    <!-- TODO - check why cat_fact not updating with new data -->
+                    <template hiza data-interval="1000">
+
                         <!-- Raw -->
-                        $json {
-                            {
-                                'a': 3,
-                                'b': 4
+                        <p>
+                            Minified: <br>
+                            $json {
+                                {
+                                    'a': 3,
+                                    'b': 4
+                                }
                             }
-                        }
+                        </p>
 
-                        <script hiza-sync>
-                            let obj_arr_local = ['name1', 'name2', 'name3'];
-                            SCOPE['obj_arr'] = obj_arr_local;
-                        </script>
-
-                        <!-- Use object in scope -->
-                        $json {
-                            obj_arr
-                        }
+                        <!-- Formatted -->
+                        <p>
+                            Formatted: <br>
+                            $formatted {
+                                GLOBAL['cat_fact']
+                            }
+                        </p>
                     </template>
                 </div>
             </div>
@@ -558,12 +596,21 @@ function raw(str) {
 
 function apply_custom_color(code) {
 
-    code = code.replace(/(\$(for|if|else if|else))/g, '<strong class="hljs-keyword">$1</strong>');
+    code = code.replace(/(\$(formatted|for|innertext|if|else if|else|json))/g, '<strong class="hljs-keyword">$1</strong>');
     code = code.replace(/(\$)\{/g, '<strong class="hljs-keyword">$1</strong>{');
 
     // code = code.replace(regx, '<strong class="hljs-keyword">$1</strong>$3<strong class="hljs-keyword">{</strong>');
 
     return code;
+}
+
+function highlight_code(pre) {
+
+    let highlighted = hljs.highlightAuto(pre.innerText).value;
+    pre.innerHTML = `<code class="language-html">${highlighted}</code>`;
+    hljs.highlightElement(pre.children[0]);
+
+    pre.children[0].innerHTML = apply_custom_color(pre.children[0].innerHTML);
 }
 
 async function on_load() {
@@ -596,15 +643,8 @@ async function on_load() {
                 await hiza.engine.init_one(templ);
             }
         }
-    }
 
-    for (let pre of document.querySelectorAll('.tutorial_row pre')) {
-
-        let highlighted = hljs.highlightAuto(pre.innerText).value;
-        pre.innerHTML = `<code class="language-html">${highlighted}</code>`;
-        hljs.highlightElement(pre.children[0]);
-
-        pre.children[0].innerHTML = apply_custom_color(pre.children[0].innerHTML);
+        highlight_code(pre);
     }
 
 };
@@ -612,4 +652,5 @@ async function on_load() {
 on_load();
 
 </script>
+
 </body>

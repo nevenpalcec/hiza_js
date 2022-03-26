@@ -5,7 +5,8 @@ if (typeof hiza === 'undefined') {
 
 hiza.engine = new function() {
 
-    this.ver = '2022-03-05';
+    let GLOBAL = {};
+    this.ver = '2022-03-26';
 
     // Used to convert strings to literal chars,
     // e.g.  hiza.engine._lit`encoded newline: \n`
@@ -143,10 +144,6 @@ hiza.engine = new function() {
     function exec_scope(scope_str, __variables__) {
 
         eval(scope_vars_js('__variables__', __variables__));
-        // // Create scoped variables
-        // for (let [var_name, var_value] of Object.entries(__variables__)) {
-        //     eval('var ' + var_name + ' = ' + JSON.stringify(var_value));
-        // }
 
         // Run
         return eval('`' + scope_str + '`');
@@ -155,10 +152,6 @@ hiza.engine = new function() {
     function exec_js(condit_str, __variables__) {
 
         eval(scope_vars_js('__variables__', __variables__));
-        // // Create scoped variables
-        // for (let [var_name, var_value] of Object.entries(__variables__)) {
-        //     eval(`var ${var_name} = __variables__['${var_name}']`);
-        // }
 
         // Run
         return eval(condit_str);
@@ -379,7 +372,30 @@ hiza.engine = new function() {
 
         let data = exec_scope(mag['scope_html'], variables);
         let innertext = hiza.engine.innertext(data);
+
+        // Remove whitespaces
+        innertext = innertext.trim().replace(/\s*\n+\s*/g, '<br>');
         return replace_substring(html, mag['start'], mag['scope_end'] + 1, innertext);
+    }
+
+    // $json, $formatted
+    function process_json(html, mag, variables, pretty=false) {
+
+        mag['scope_html'] = hiza.engine.decode(mag['scope_html']);
+        let obj = exec_js(`
+            let _o_ = ${mag['scope_html']};
+            _o_
+        `, variables);
+        let args = pretty ? 'obj, null, 2' : 'obj';
+
+        let json = eval(`JSON.stringify(${args})`);
+
+        if (pretty) {
+
+            // Convert prettified JSON to HTML
+            json = hiza.engine.encode(json).replace(/ /g, '&nbsp;');
+        }
+        return replace_substring(html, mag['start'], mag['scope_end'] + 1, json);
     }
 
     this.build = async function (html, variables, config = {}) {
@@ -407,7 +423,8 @@ hiza.engine = new function() {
             'decode',
             'encode',
             'innertext',
-            'json'
+            'json',
+            'formatted'
         ];
         let magic_regex = make_regexp(mag_raw, mag_prn);
         
@@ -440,9 +457,12 @@ hiza.engine = new function() {
             else if (mag.keyword == 'innertext') {
                 html = process_innertext(html, mag, variables);
             }
-            // else if (mag.keyword == 'json') {
-            //     html = process_json(html, mag, variables);
-            // }
+            else if (mag.keyword == 'json') {
+                html = process_json(html, mag, variables);
+            }
+            else if (mag.keyword == 'formatted') {
+                html = process_json(html, mag, variables, true);
+            }
             else if (typeof mag.script_attr !== 'undefined') {
                 html = await process_script(html, mag, variables, config);
             }
