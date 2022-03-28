@@ -179,6 +179,7 @@
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
+                    <!-- Script outside of <template hiza> -->
                     <script>
                         let example = 'Steve';
                     </script>
@@ -312,6 +313,7 @@
                 <div class="result">
                     <template hiza>
 
+                        <!-- Script inside <template hiza> -->
                         <script hiza-sync>
                             let object_count = 13;
 
@@ -346,12 +348,14 @@
                     <template hiza>
                         <script hiza-sync>
                             let data = 'I can be used globally';
+
+                            // Save data for all HIŽA templates
                             GLOBAL['data'] = data;
                         </script>
 
                         Saving <em>${ GLOBAL['data'] }</em>...
                     </template>
-                    <hr>
+                    <br>
 
                     <!-- Second template -->
                     <template hiza>
@@ -382,7 +386,7 @@
                     <template id="cat_template" hiza data-dest="#cat_container">
                         <script hiza-async>
 
-                            // Show loading
+                            // Show loading on #cat_container
                             SCOPE.DEST.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
 
                             // Fetch example api
@@ -463,6 +467,8 @@
 
                         <!-- Run script after templating -->
                         <script hiza-defer>
+
+                            // SCOPE.DEST is the same as document.getElementById('dest_example')
 
                             // Apply style to .make_underline
                             let span_underline = SCOPE.DEST.querySelector('.make_underline');
