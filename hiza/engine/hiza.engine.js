@@ -506,6 +506,7 @@ hiza.engine = new function() {
             scope['DEST'] = destination;
         }
         else {
+            scope['DEST'] = template.parentElement;
             console.log('Hiža: [data-dest] not found. Engine will overwrite the <template> element.')
         }
 
