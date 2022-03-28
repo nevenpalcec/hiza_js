@@ -417,6 +417,7 @@ hiza.engine = new function() {
         let mag_raw = [
             '<script hiza-(a?sync|defer)>',
         ];
+
         let mag_prn = [
             'if',
             'for',
@@ -424,8 +425,9 @@ hiza.engine = new function() {
             'encode',
             'innertext',
             'json',
-            'formatted'
+            'formatted',
         ];
+
         let magic_regex = make_regexp(mag_raw, mag_prn);
         
         let max_magic = 100000;
