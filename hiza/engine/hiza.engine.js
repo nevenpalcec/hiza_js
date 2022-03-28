@@ -532,6 +532,7 @@ hiza.engine = new function() {
         else if (isNaN(template.dataset.interval) == false) {
 
             clearInterval(template.hiza.interval_tid);
+            build_and_deploy();
             template.hiza.interval_tid = setInterval(async function() {
                 
                 try {
@@ -551,9 +552,22 @@ hiza.engine = new function() {
 
     }
 
-    this.init = function() {
+    this.init = async function() {
+
         // Init
-        document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
+        // document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
+
+        // Run all at once
+        let promises = [];
+        for (let template of document.querySelectorAll('template[hiza]')) {
+            let p = hiza.engine.init_one(template);
+            promises.push(p);
+        }
+
+        // Wait for each to finish
+        for (let p of promises) {
+            await p;
+        }
     }
 };
 

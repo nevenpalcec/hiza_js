@@ -609,7 +609,7 @@ function raw(str) {
 
 function apply_custom_color(code) {
 
-    code = code.replace(/(\$(formatted|for|innertext|if|else if|else|json))/g,
+    code = code.replace(/(\$(formatted|for|innertext|if|else if|else|json|encode|decode))/g,
         '<strong class="hljs-keyword">$1</strong>');
         
     code = code.replace(/(\$)\{/g, '<strong class="hljs-keyword">$1</strong>{');
