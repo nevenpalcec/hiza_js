@@ -14,6 +14,115 @@ hiza.engine = new function() {
         return str.raw[0];
     }
 
+    // Decode chars such as &lt; to <
+    this.decode = function (html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html || '';
+        return txt.value;
+    }
+
+    // Encode chars such as < to &lt;
+    this.encode = function(html) {
+        var div = document.createElement('div');
+        div.innerText = html;
+        return div.innerHTML;
+    }
+
+    this.innertext = function(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return div.innerText;
+    }
+
+    // Insert HTML or script from source without script exec
+    this.load_no_execute = async function(destination_el, url) {
+
+        let data = await fetch(url).then(res => res.text());
+        
+        if (url.endsWith('.js')) {
+            data = '<script>\n    // Fetched by hiza.engine: "' + url + "'\n" +
+                data.replace('\n', '\n    ').trim() + '\n</script>';
+        }
+        destination_el.innerHTML = data;
+    }
+
+    this.load_remote_hiza = async function(destination_el, url, variables={}) {
+
+        let data = await fetch(url).then(res => res.text());
+        data = data.trim();
+        
+        if (data.startsWith('<template') && data.endsWith('</template>')) {
+            throw new Error(`HIŽA: Error while loading "${url}".\n\tPages of type .hiza.html must not begin with <template tag>.`);
+        }
+
+        var config = {
+            'defer': []
+        };
+        data = await hiza.engine.build(data, variables, config);
+
+        // Run defer scripts
+        for (d_script of config['defer']) {
+            await d_script;
+        }
+    }
+
+    this.exec_element_scripts = async function(parent_el) {
+
+        // Load and/or execute scripts
+        let defers = [];
+
+        for (let script of parent_el.querySelectorAll('script')) {
+
+            if ((script.src || '').startsWith('./')) {
+
+                // Allow script URLs that start with './...'
+                let dir_path = url.replace(/\/[^\/]+$/, '');
+                script.src = script.src.replace(/^\.\//, dir_path);
+            }
+
+            if (!script.src) {
+
+                // Inline
+                eval(script.innerText);
+            }
+            else if (script.async) {
+
+                // Async
+                fetch(script.src).then(res => res.text()).then(eval);
+            }
+            else if (script.defer) {
+
+                // Defer
+                d_scripts.push(fetch(script.src).then(res => res.text()));
+            }
+            else {
+
+                // Sync
+                eval(await fetch(script.src).then(res => res.text()));
+            }
+        }
+        for (let d_script of defers) {
+            await d_script.then(eval);
+        }
+    }
+
+    // Load HTML page
+    this.load = async function(destination_el, url) {
+
+        // Special processing for '.hiza.html' pages
+        if (url.endsWith('.hiza.html')) {
+            hiza.engine.load_remote_hiza(destination_el, url);
+            return;
+        }
+
+        // Load HTML first
+        await hiza.engine.load_no_execute(destination_el, url);
+
+        // Exec scripts
+        await hiza.engine.exec_element_scripts(destination_el);
+
+    }
+
     /*
         Extract data:
         -
@@ -34,7 +143,9 @@ hiza.engine = new function() {
             'condition': condition,
             'start': regx['index'],
             'scope_start': regx['index'] + regx[0].length - 1,
-            'is_async': (regx[2] == 'async' || regx[2] == 'defer')
+            'is_sync': (regx[2] == 'sync'),
+            'is_async': (regx[2] == 'async'),
+            'is_defer': (regx[2] == 'defer')
         };
 
         // Find script end
@@ -85,10 +196,11 @@ hiza.engine = new function() {
     function check_illegal(html) {
 
         let errors = [];
+        let warnings = [];
 
         let scripts_rgx = Array.from(html.matchAll(/<script>/g));
         scripts_rgx.forEach(rgx => {
-            errors.push(
+            warnings.push(
                 'Found <script> element without [hiza-*] attribute ' +
                 'at index ' + rgx['index'] + '. Please use hiza-sync, hiza-async or hiza-defer>.'
             );
@@ -101,26 +213,13 @@ hiza.engine = new function() {
             }).join('\n');
             throw `Errors found in html:\n` + pretty_err_arr;
         }
-    }
-
-    // Decode chars such as &lt; to <
-    this.decode = function (html) {
-        var txt = document.createElement("textarea");
-        txt.innerHTML = html || '';
-        return txt.value;
-    }
-
-    // Encode chars such as < to &lt;
-    this.encode = function(html) {
-        var div = document.createElement('div');
-        div.innerText = html;
-        return div.innerHTML;
-    }
-
-    this.innertext = function(html) {
-        var div = document.createElement('div');
-        div.innerHTML = html;
-        return div.innerText;
+        if (warnings.length > 0) {
+            
+            let pretty_err_arr = warnings.map((er, idx) => {
+                return '\t' + (idx + 1) + ': ' + er
+            }).join('\n');
+            throw `HIŽA warnings:\n` + pretty_err_arr;
+        }
     }
 
     function remove_comments(html) {
@@ -220,13 +319,13 @@ hiza.engine = new function() {
         async function exec () {
 
             let prom = exec_script_scope(`
-                ${mag['is_async'] ? 'async' : ''} function _hiza_script_() {
+                ${mag['is_sync'] ? '' : 'async'} function _hiza_script_() {
                     ${mag['scope_html']}
                 }
                 _hiza_script_()
             `, 'SCOPE', variables);
 
-            if (mag['is_async']) {
+            if (mag['is_sync'] == false) {
                 await prom;
             }
         }
@@ -483,24 +582,27 @@ hiza.engine = new function() {
 
     this.init_one = async function(template) {
 
+        let is_hiza_url = (template.dataset.url || '').endsWith('.hiza.html');
+
+        if (template.dataset.url) {
+            hiza.engine.load_no_execute(template, template.dataset.url);
+        }
+
         template.hiza = {
             run: () => hiza.engine.init_one(template),
             interval_tid: null,
             timeout_tid: null
         };
 
-        var config = {
-            'defer': []
-        };
-
+        
         // Find [data-dest]
         let destination = template.dataset['dest'];
         let scope = {
             'SELF': template,
         };
-
+        
         template.hiza.SCOPE = scope;
-
+        
         if (destination) {
             destination = document.querySelector(destination);
             scope['DEST'] = destination;
@@ -510,6 +612,17 @@ hiza.engine = new function() {
             console.log('Hiža: [data-dest] not found. Engine will overwrite the <template> element.')
         }
 
+        // Templating configuration
+        var config = {
+
+            // Defer script container
+            'defer': [
+
+                // // First defer script handles non-hiza <script> elements
+                // async () => hiza.engine.exec_element_scripts(scope['DEST'])
+            ]
+        };
+
         async function build_and_deploy() {
 
             let templated_html = await hiza.engine.build(template.innerHTML, scope, config);
@@ -517,13 +630,30 @@ hiza.engine = new function() {
                 destination.innerHTML = templated_html;
             }
             else {
-                template.outerHTML = templated_html;
+                if (template.parentElement) {
+
+                    if (typeof template.dataset.overwrite !== 'undefined') {
+                        template.parentElement.innerHTML = templated_html;
+                    }
+                    else {
+                        template.outerHTML = templated_html;
+                    }
+                }
+                else {
+                    console.error(`HIŽA: Cannot find the <template> element anymore (id=${template.id || ''}). ` +
+                        `Have you changed the parent HTML?`);
+                }
             }
 
             // Run defer scripts
             for (let i = 0; i < config['defer'].length; ++i) {
                 await config['defer'][i]();
             }
+        }
+
+        if (!destination && isNaN(template.dataset.interval) == false) {
+            console.warn('HIŽA: Cannot use [data-interval] on element without [data-dest]. Template will run once.');
+            delete template.dataset.interval;
         }
 
         if (isNaN(template.dataset.timeout) == false) {
@@ -541,7 +671,7 @@ hiza.engine = new function() {
                 }
                 catch (err) {
                     console.error(err);
-                    console.log('Error found. Stopping interval...');
+                    console.warn('HIŽA: Error found. Stopping interval...');
                     clearInterval(template.hiza.interval_tid);
                 }
             }, template.dataset.interval);
@@ -576,7 +706,7 @@ hiza.engine = new function() {
 window.addEventListener('load', function() {
 
     document.querySelectorAll('template[hiza]').forEach(template => {
-        console.log(template.id);
+        console.log('HIŽA: Init template ' + (template.id || ''));
         template.hiza = {
             run: () => hiza.engine.init_one(template)
         };

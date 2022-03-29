@@ -26,12 +26,13 @@
     <script>
         var DISABLE_HIZA_INIT = true;
     </script>
-    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script>
-    <!-- <script src="./hiza.engine.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script> -->
+    <script src="./hiza.engine.js"></script>
+    <!-- <script src="./hiza.engine-lts.js"></script> -->
 
     <style>
 
-        .tutorial_row {
+        .row {
             border-bottom: 1px solid lightgray;
             padding-bottom: 1rem;
             margin-bottom: 50px;
@@ -92,13 +93,13 @@
                 &nbsp;&nbsp;&nbsp;
                 <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo</h1>
                 &nbsp;&nbsp;&nbsp;
-                <h1 class="page_title_sub">
-                    <template id="ver_templ">
+                <h1 class="page_title_sub force_init">
+                    <template hiza data-overwrite>
+                        <script hiza-sync>
+                            SCOPE.DEST.insertAdjacentHTML('afterbegin', '<i class="fas fa-spinner fa-pulse"></i>');
+                        </script>
                         Ver_${ hiza.engine.ver }
                     </template>
-                    <script>
-                        hiza.engine.init_one(ver_templ);
-                    </script>
                 </h1>
             </div>
             
@@ -580,6 +581,17 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Unfinished tutorials:</h3>
+                <ol>
+                    <li> [data-overwrite] </li>
+                    <li> [data-url] </li>
+                    <li> hiza.engine.load </li>
+                </ol>
+            </div>
+        </div>
+
     </main>
 
 <script>
@@ -652,6 +664,7 @@ async function on_load() {
         if (row.classList.contains('ignore-init') == false) {
             
             for (let templ of row.querySelectorAll('[hiza]')) {
+                console.log('Initializing ' + templ.id);
                 await hiza.engine.init_one(templ);
             }
         }
