@@ -6,7 +6,7 @@ if (typeof hiza === 'undefined') {
 hiza.engine = new function() {
 
     let GLOBAL = {};
-    this.ver = '2022-03-26';
+    this.ver = '2022-03-29';
 
     // Used to convert strings to literal chars,
     // e.g.  hiza.engine._lit`encoded newline: \n`

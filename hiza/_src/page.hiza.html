@@ -4,9 +4,13 @@
 </p>
 <div>
     <h4>'message' variable:</h4>
-    <p>
-        ${
-            typeof message !== 'undefined' ? message : 'Not found.'
+    <script hiza-sync>
+
+        if (typeof SCOPE !== 'undefined') {
+            SCOPE['message'] = SCOPE['message'] || 'Not found.';
         }
+    </script>
+    <p>
+        ${ message }
     </p>
 </div>

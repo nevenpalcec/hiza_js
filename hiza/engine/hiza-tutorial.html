@@ -28,7 +28,6 @@
     </script>
     <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script> -->
     <script src="./hiza.engine.js"></script>
-    <!-- <script src="./hiza.engine-lts.js"></script> -->
 
     <style>
 
@@ -506,31 +505,6 @@
             </div>
         </div>
 
-        <!-- [data-timeout] -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> [data-timeout] </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <div class="mb-2">
-                        <button class="btn btn-success"
-                            onclick="timeout_template.hiza.run()">Run with 1s delay</button>
-                    </div>
-
-                    <h4 id="timeout_container">
-                    </h4>
-
-                    <template id="timeout_template" hiza data-dest="#timeout_container" data-timeout="1000">
-                        ${ new Date().toLocaleTimeString() }
-                    </template>
-                </div>
-            </div>
-        </div>
-
         <!-- Manual templating -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
@@ -565,6 +539,31 @@
                         <p>
                             ${ GLOBAL['cat_fact']['fact'] }
                         </p>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- [data-timeout] -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> [data-timeout] </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <div class="mb-2">
+                        <button class="btn btn-success"
+                            onclick="timeout_template.hiza.run()">Run with 1s delay</button>
+                    </div>
+
+                    <h4 id="timeout_container">
+                    </h4>
+
+                    <template id="timeout_template" hiza data-dest="#timeout_container" data-timeout="1000">
+                        ${ new Date().toLocaleTimeString() }
                     </template>
                 </div>
             </div>
