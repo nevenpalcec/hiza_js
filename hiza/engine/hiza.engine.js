@@ -568,7 +568,34 @@ hiza.engine = new function() {
         return exec_scope(html, variables);
     }
 
+    this.init_non_template = async function(el) {
+
+        if (!el.dataset.url) {
+
+            // For now, only non-template elements that are processed are the ones with [data-url]
+            return;
+        }
+        
+        let url = el.dataset.url;
+        if (url.endsWith('.hiza.html')) {
+
+            let templ = document.createElement('template');
+            el.insertAdjacentElement('beforeend', templ);
+
+            await hiza.engine.load_no_execute(templ, url);
+            await hiza.engine.init_one(templ);
+        }
+        else {
+            await hiza.engine.load(el, url);
+        }
+    }
+
     this.init_one = async function(template) {
+
+        if (template.tagName != 'TEMPLATE') {
+            await hiza.engine.init_non_template(template);
+            return;
+        }
 
         if (template.dataset.url) {
             await hiza.engine.load_no_execute(template, template.dataset.url);
@@ -683,34 +710,12 @@ hiza.engine = new function() {
         let promises = [];
         for (let el of document.querySelectorAll('[hiza]')) {
 
-            if (el.tagName == 'TEMPLATE') {
-
-                let p = hiza.engine.init_one(el);
-                promises.push(p);
+            if (el.dataset.ignore_init) {
+                continue;
             }
-            else {
 
-                if (!el.dataset.url) {
-
-                }
-                let url = el.dataset.url;
-                if (url.endsWith('.hiza.html')) {
-
-                    let templ = document.createElement('template');
-                    el.insertAdjacentElement('beforeend', templ);
-
-                    async function make_hiza_html() {
-
-                        await hiza.engine.load_no_execute(templ, url);
-                        await hiza.engine.init_one(templ);
-                    }
-                    promises.push(make_hiza_html());
-                }
-                else {
-                    promises.push(hiza.engine.load(el, url));
-                }
-
-            }
+            let p = hiza.engine.init_one(el);
+            promises.push(p);
         }
 
         // Wait for each to finish

@@ -91,7 +91,7 @@
             <div class="col-12 pt-4">
                 <h1 class="page_title" onclick="window.open('https://github.com/nevenpalcec/hiza_js', '_blank');" style="color: #e06c75;">&lt;hiža&gt;</h1>
                 &nbsp;&nbsp;&nbsp;
-                <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/index.html', '_blank');">Demo</h1>
+                <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/demos/engine.html', '_blank');">Demo</h1>
                 &nbsp;&nbsp;&nbsp;
                 <h1 class="page_title_sub force_init">
                     <template hiza data-overwrite>
@@ -329,6 +329,36 @@
             </div>
         </div>
 
+        <!-- SCOPE.DEST -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> SCOPE.DEST </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <p id="dest_example"></p>
+
+                    <template hiza data-dest="#dest_example">
+                    
+                        Hello <span class="make_underline">world</span>!
+
+                        <!-- Run script after templating -->
+                        <script hiza-defer>
+
+                            // SCOPE.DEST is the same as document.getElementById('dest_example')
+
+                            // Apply style to .make_underline
+                            let span_underline = SCOPE.DEST.querySelector('.make_underline');
+                            span_underline.style.textDecoration = 'underline';
+                        </script>
+                    </template>
+                </div>
+            </div>
+        </div>
+
         <!-- GLOBAL keyword -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
@@ -360,41 +390,98 @@
             </div>
         </div>
 
-        <!-- Manual templating -->
+        <!-- [data-overwrite] keyword -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Manual - &lt;template&gt;.hiza.run() </h3>
+                <h3> [data-overwrite] </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <div class="mb-4">
-                        <button class="btn btn-success w-100" onclick="cat_template.hiza.run()">Run</button>
-                    </div>
-
-                    <h4 id="cat_container" class="text-center">
-                        <!-- Template result goes here -->
-                    </h4>
-
-                    <template id="cat_template" hiza data-dest="#cat_container">
-                        <script hiza-async>
-
-                            // Show loading on #cat_container
-                            SCOPE.DEST.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
-
-                            // Fetch example api
-                            let res = await fetch('https://catfact.ninja/fact').then(res => res.json());
-
-                            // Store globally
-                            GLOBAL['cat_fact'] = res;
-                        </script>
-
-                        <p>
-                            ${ GLOBAL['cat_fact']['fact'] }
-                        </p>
+                    
+                    <!-- Template with [data-dest] overwrites innerHTML -->
+                    <p id="overwrite_dest_example">
+                        Text inside destination element.
+                    </p>
+                    <template hiza data-dest="#overwrite_dest_example">
+                        Test
                     </template>
+
+                    <!-- Template without [data-dest] will put result inplace -->
+                    <p>
+                        Text before template. <br>
+                        <template hiza>
+                            - inside template.
+                        </template>
+                        <br> Text after template.
+                    </p>
+
+                    <!-- Without [data-dest], with [data-overwrite] overwrites innerHTML -->
+                    <p>
+                        Text before template. <br>
+
+                        <template hiza data-overwrite>
+                            - inside template.
+                        </template>
+
+                        <br> Text after template.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- [data-url] and .load -->
+        <div class="row tutorial_row">
+            <div class="col-md-8 tutorial">
+                <h3> Remote sources </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-4 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+
+                    <!-- Manual load -->
+                    <div class="p-2" id="manual_load_example">
+                        <u>page.html:</u> (hiza.engine.run) <br>
+                    </div>
+                    <script>
+                        let manual_load_url = 'https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html';
+                        hiza.engine.load(manual_load_example, manual_load_url);
+                    </script>
+                    <hr>
+                    
+                    <!-- Load remote source into template -->
+                    <div class="p-2">
+                        <u>page.html:</u> (template[data-url]) <br>
+                        <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html"></template>
+                    </div>
+                    <hr>
+
+                    <!-- Load remote source into any element (and execute scripts) -->
+                    <div hiza class="p-2 mb-4" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html">
+                        <u>page.html:</u> (*[data-url]) <br>
+                    </div>
+                    <hr>
+
+                    <!-- Load .hiza.html -> Runs templating before insert -->
+                    <div hiza class="p-2 mb-4" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
+                        <u>page.hiza.html:</u> (*[data-url]) <br>
+                    </div>
+                    <hr>
+
+                    <!-- Templating .hiza.html allows to pre-fetch variables -->
+                    <div class="p-2 mb-4">
+                        <u>page.html:</u> (template + .hiza.html) <br>
+                        <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
+                            <script hiza-sync>
+                                SCOPE['message'] = 'Hello';
+                            </script>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -444,31 +531,40 @@
             </div>
         </div>
 
-        <!-- SCOPE.DEST -->
+        <!-- Manual templating -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> SCOPE.DEST </h3>
+                <h3> Manual - &lt;template&gt;.hiza.run() </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <p id="dest_example"></p>
+                    <div class="mb-4">
+                        <button class="btn btn-success w-100" onclick="cat_template.hiza.run()">Run</button>
+                    </div>
 
-                    <template hiza data-dest="#dest_example">
-                    
-                        Hello <span class="make_underline">world</span>!
+                    <h4 id="cat_container" class="text-center">
+                        <!-- Template result goes here -->
+                    </h4>
 
-                        <!-- Run script after templating -->
-                        <script hiza-defer>
+                    <template id="cat_template" hiza data-dest="#cat_container">
+                        <script hiza-async>
 
-                            // SCOPE.DEST is the same as document.getElementById('dest_example')
+                            // Show loading on #cat_container
+                            SCOPE.DEST.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
 
-                            // Apply style to .make_underline
-                            let span_underline = SCOPE.DEST.querySelector('.make_underline');
-                            span_underline.style.textDecoration = 'underline';
+                            // Fetch example api
+                            let res = await fetch('https://catfact.ninja/fact').then(res => res.json());
+
+                            // Store globally
+                            GLOBAL['cat_fact'] = res;
                         </script>
+
+                        <p>
+                            ${ GLOBAL['cat_fact']['fact'] }
+                        </p>
                     </template>
                 </div>
             </div>
@@ -585,9 +681,7 @@
             <div class="col-md-12">
                 <h3>Unfinished tutorials:</h3>
                 <ol>
-                    <li> [data-overwrite] </li>
-                    <li> [data-url] </li>
-                    <li> hiza.engine.load </li>
+                    <li> [data-ignore_init] </li>
                 </ol>
             </div>
         </div>
@@ -665,6 +759,7 @@ async function on_load() {
             
             for (let templ of row.querySelectorAll('[hiza]')) {
                 console.log('Initializing ' + templ.id);
+
                 await hiza.engine.init_one(templ);
             }
         }
