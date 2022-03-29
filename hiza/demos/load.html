@@ -20,21 +20,43 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
     <!-- Hiža -->
+    <script>
+        var DISABLE_HIZA_INIT = true;
+    </script>
     <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script> -->
     <script src="/hiza/engine/hiza.engine.js"></script>
 
     <style>
-        h1 + div {
+        h3 {
+            margin-bottom: 15px;
+        }
+        h3 + div {
             box-shadow: 3px 3px 3px gray;
             margin-bottom: 50px;
             border: 1px solid gray;
             padding: 5px 10px;
             user-select: none;
             cursor: pointer;
+            position: relative;
+            min-height: 50px;
         }
-        h1 + div:hover {
+        h3 + div:hover {
             opacity: 0.6;
         }
+
+        h3 + div::before {
+            content: "page";
+            font-size: 2rem;
+            position: absolute;
+            top: 0;
+            right: 1rem;
+        }
+
+        h3 + div.active::before {
+            content: "<html>";
+            right: 0;
+        }
+
     </style>
 
 </head>
@@ -44,40 +66,68 @@
         <div class="row">
             <div class="col-md-12">
 
-                <h1>templ + page.html</h1>
+                <div class="p-4">
+                    <button class="btn btn-success w-100" onclick="run(); this.classList.add('invisible');">Run</button>
+                </div>
+
+                <h3> template[data-url] - page.html</h3>
                 <div>
                     <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html"></template>
                 </div>
 
-                <h1>templ + page.js</h1>
+                <h3> template[data-url] - page.hiza.html</h3>
+                <div>
+                    <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
+                        <script hiza-sync>
+                            GLOBAL['test-variable'] = 123;
+                        </script>
+                    </template>
+                </div>
+
+                <h3> template[data-url] - page.js</h3>
                 <div>
                     <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.js"></template>
                 </div>
 
-                <h1>div + page.hiza.html</h1>
-                <div hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
+                <h3> &lt;any&gt;[data-url] - page.hiza.html </h3>
+                <div>
+                    <div hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
+                    </div>
                 </div>
 
                 <hr>
-                <h1> Click on the page to see its HTML </h1>
+                <h5> Click on the page to toggle page and its HTML code </h5>
             </div>
         </div>
     </div>
 
 <script>
-    document.querySelectorAll('h1 + div').forEach(e => {
+    
+    let div_all = document.querySelectorAll('h3 + div');
+
+    function run() {
+        div_all.forEach(e => {
+            if (e.classList.contains('active')) {
+                e.click();
+            }
+        });
+        hiza.engine.init();
+    }
+
+    div_all.forEach(e => {
 
         e.onclick = function() {
 
-            if (e.active === 'Y') {
+            if (e.classList.contains('active')) {
                 e.innerHTML = e.innerText;
-                e.active = 'N';
+                e.classList.remove('active');
             }
             else {
                 e.innerText = e.innerHTML;
-                e.active = 'Y';
+                e.classList.add('active');
             }
         }
+        e.click();
     });
 </script>
 </body>

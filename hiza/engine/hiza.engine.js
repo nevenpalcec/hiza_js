@@ -690,6 +690,9 @@ hiza.engine = new function() {
             }
             else {
 
+                if (!el.dataset.url) {
+
+                }
                 let url = el.dataset.url;
                 if (url.endsWith('.hiza.html')) {
 

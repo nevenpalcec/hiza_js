@@ -3,10 +3,10 @@
     I am a remote .hiza.html page. I can use keywords SCOPE variables!
 </p>
 <div>
-    <h4>Variables in global scope:</h4>
+    <h4>'message' variable:</h4>
     <p>
-        $formatted {
-            GLOBAL
+        ${
+            message || 'Not found.'
         }
     </p>
 </div>
