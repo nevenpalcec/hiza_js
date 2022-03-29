@@ -23,6 +23,20 @@
     <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script> -->
     <script src="/hiza/engine/hiza.engine.js"></script>
 
+    <style>
+        h1 + div {
+            box-shadow: 3px 3px 3px gray;
+            margin-bottom: 50px;
+            border: 1px solid gray;
+            padding: 5px 10px;
+            user-select: none;
+            cursor: pointer;
+        }
+        h1 + div:hover {
+            opacity: 0.6;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -32,21 +46,39 @@
 
                 <h1>templ + page.html</h1>
                 <div>
-                    <template hiza data-url="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/_src/page.html"></template>
+                    <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html"></template>
                 </div>
 
                 <h1>templ + page.js</h1>
                 <div>
-                    <template hiza data-url="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/_src/page.js"></template>
+                    <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.js"></template>
                 </div>
 
                 <h1>div + page.hiza.html</h1>
-                <div hiza data-url="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/_src/page.hiza.html">
+                <div hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
                 </div>
 
+                <hr>
+                <h1> Click on the page to see its HTML </h1>
             </div>
         </div>
     </div>
 
+<script>
+    document.querySelectorAll('h1 + div').forEach(e => {
+
+        e.onclick = function() {
+
+            if (e.active === 'Y') {
+                e.innerHTML = e.innerText;
+                e.active = 'N';
+            }
+            else {
+                e.innerText = e.innerHTML;
+                e.active = 'Y';
+            }
+        }
+    });
+</script>
 </body>
 </html>

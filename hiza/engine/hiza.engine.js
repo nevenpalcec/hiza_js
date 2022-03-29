@@ -694,6 +694,7 @@ hiza.engine = new function() {
                 if (url.endsWith('.hiza.html')) {
 
                     let templ = document.createElement('template');
+                    el.insertAdjacentElement('beforeend', templ);
 
                     async function make_hiza_html() {
 
