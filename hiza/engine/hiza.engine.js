@@ -202,7 +202,7 @@ hiza.engine = new function() {
         scripts_rgx.forEach(rgx => {
             warnings.push(
                 'Found <script> element without [hiza-*] attribute ' +
-                'at index ' + rgx['index'] + '. Please use hiza-sync, hiza-async or hiza-defer>.'
+                'at index ' + rgx['index'] + '. Please use hiza-sync, hiza-async or hiza-defer.'
             );
         });
 
@@ -218,7 +218,7 @@ hiza.engine = new function() {
             let pretty_err_arr = warnings.map((er, idx) => {
                 return '\t' + (idx + 1) + ': ' + er
             }).join('\n');
-            throw `HIŽA warnings:\n` + pretty_err_arr;
+            console.warn(`HIŽA warnings:\n` + pretty_err_arr);
         }
     }
 
@@ -585,7 +585,7 @@ hiza.engine = new function() {
         let is_hiza_url = (template.dataset.url || '').endsWith('.hiza.html');
 
         if (template.dataset.url) {
-            hiza.engine.load_no_execute(template, template.dataset.url);
+            await hiza.engine.load_no_execute(template, template.dataset.url);
         }
 
         template.hiza = {
@@ -648,6 +648,11 @@ hiza.engine = new function() {
             // Run defer scripts
             for (let i = 0; i < config['defer'].length; ++i) {
                 await config['defer'][i]();
+            }
+
+            // Run non-HIŽA scripts
+            if (scope['DEST']) {
+                hiza.engine.exec_element_scripts(scope['DEST']);
             }
         }
 
