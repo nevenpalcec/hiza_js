@@ -35,7 +35,7 @@ hiza.engine = new function() {
     }
 
     // Insert HTML or script from source without script exec
-    this.load_no_execute = async function(destination_el, url) {
+    this.load_no_execute = async function(destination_el, url, insert_pos = 'beforeend') {
 
         let data = await fetch(url).then(res => res.text());
         
@@ -43,26 +43,14 @@ hiza.engine = new function() {
             data = '<script>\n    // Fetched by hiza.engine: "' + url + "'\n" +
                 data.replace('\n', '\n    ').trim() + '\n</script>';
         }
-        destination_el.innerHTML = data;
-    }
 
-    this.load_remote_hiza = async function(destination_el, url, variables={}) {
+        if (destination_el.tagName == 'TEMPLATE') {
 
-        let data = await fetch(url).then(res => res.text());
-        data = data.trim();
-        
-        if (data.startsWith('<template') && data.endsWith('</template>')) {
-            throw new Error(`HIŽA: Error while loading "${url}".\n\tPages of type .hiza.html must not begin with <template tag>.`);
+            // insertAdjacentHTML does not work on <template>
+            destination_el.innerHTML += data;
         }
-
-        var config = {
-            'defer': []
-        };
-        data = await hiza.engine.build(data, variables, config);
-
-        // Run defer scripts
-        for (d_script of config['defer']) {
-            await d_script;
+        else {
+            destination_el.insertAdjacentHTML(insert_pos, data);
         }
     }
 
@@ -109,11 +97,11 @@ hiza.engine = new function() {
     // Load HTML page
     this.load = async function(destination_el, url) {
 
-        // Special processing for '.hiza.html' pages
-        if (url.endsWith('.hiza.html')) {
-            hiza.engine.load_remote_hiza(destination_el, url);
-            return;
-        }
+        // // Special processing for '.hiza.html' pages
+        // if (url.endsWith('.hiza.html')) {
+        //     hiza.engine.load_remote_hiza(destination_el, url);
+        //     return;
+        // }
 
         // Load HTML first
         await hiza.engine.load_no_execute(destination_el, url);
@@ -582,8 +570,6 @@ hiza.engine = new function() {
 
     this.init_one = async function(template) {
 
-        let is_hiza_url = (template.dataset.url || '').endsWith('.hiza.html');
-
         if (template.dataset.url) {
             await hiza.engine.load_no_execute(template, template.dataset.url);
         }
@@ -695,9 +681,32 @@ hiza.engine = new function() {
 
         // Run all at once
         let promises = [];
-        for (let template of document.querySelectorAll('template[hiza]')) {
-            let p = hiza.engine.init_one(template);
-            promises.push(p);
+        for (let el of document.querySelectorAll('[hiza]')) {
+
+            if (el.tagName == 'TEMPLATE') {
+
+                let p = hiza.engine.init_one(el);
+                promises.push(p);
+            }
+            else {
+
+                let url = el.dataset.url;
+                if (url.endsWith('.hiza.html')) {
+
+                    let templ = document.createElement('template');
+
+                    async function make_hiza_html() {
+
+                        await hiza.engine.load_no_execute(templ, url);
+                        await hiza.engine.init_one(templ);
+                    }
+                    promises.push(make_hiza_html());
+                }
+                else {
+                    promises.push(hiza.engine.load(el, url));
+                }
+
+            }
         }
 
         // Wait for each to finish
