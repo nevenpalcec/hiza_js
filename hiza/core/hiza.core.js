@@ -1007,11 +1007,16 @@ hiza.core = new function () {
             // clear element
             element.innerHTML = '';
 
-            for (var r of data) {
-                js.html.insertAdjacentHTML(
-                    el
-                    , eval('`' + template_html + '`')
-                );
+            try {
+                for (var r of data) {
+                    js.html.insertAdjacentHTML(
+                        el
+                        , eval('`' + template_html + '`')
+                    );
+                }
+            }
+            catch (error) {
+                console.error(error);
             }
 
             // add template & load again
