@@ -596,14 +596,17 @@ hiza.engine = new function() {
         
     }
 
-    async function handle_remote_template(template, url) {
+    async function handle_remote_template(template) {
 
         // Reset initial HTML
         template.innerHTML = template.hiza.initial_html;
 
         let req_body;
+        
         if (template.hasAttribute('data-body')) {
+
             req_body = JSON.parse(template.dataset.body);
+            template.hiza.SCOPE.REQUEST['body'] = req_body;
         }
         await hiza.engine.load_no_execute(template, template.dataset.url, req_body);
     }
@@ -619,6 +622,7 @@ hiza.engine = new function() {
         // Make scope
         let scope = {
             'SELF': template,
+            'REQUEST': {}
         };
 
         // Make namespace on <template>
