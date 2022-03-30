@@ -249,14 +249,14 @@
             </div>
         </div>
 
-        <!-- DISABLE_HIZA_INIT -->
+        <!-- Disable automatic init -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> DISABLE_HIZA_INIT </h3>
+                <h3> Disable automatic init </h3>
                 <pre></pre>
             </div>
 
-            <div class="col-md-6 tutorial d-none">
+            <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
 
@@ -264,6 +264,13 @@
                     <script>
                         var DISABLE_HIZA_INIT = true;
                     </script>
+                    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script>
+
+                    <!-- To exclude single template from automatic init, use [data-ignore_init] -->
+                    <template hiza data-ignore_init>
+                        I am not rendered.
+                    </template>
+
                 </div>
             </div>
         </div>
@@ -402,7 +409,7 @@
                     
                     <!-- Template with [data-dest] overwrites innerHTML -->
                     <p id="overwrite_dest_example">
-                        Text inside destination element.
+                        I get overwritten.
                     </p>
                     <template hiza data-dest="#overwrite_dest_example">
                         Test
@@ -410,86 +417,22 @@
 
                     <!-- Template without [data-dest] will put result inplace -->
                     <p>
-                        Text before template. <br>
+                        Before.
                         <template hiza>
-                            - inside template.
+                            Inside. 
                         </template>
-                        <br> Text after template.
+                        After.
                     </p>
 
                     <!-- Without [data-dest], with [data-overwrite] overwrites innerHTML -->
                     <p>
-                        Text before template. <br>
-
+                        Before.
                         <template hiza data-overwrite>
-                            - inside template.
+                            Inside.
                         </template>
-
-                        <br> Text after template.
+                        After.
                     </p>
 
-                </div>
-            </div>
-        </div>
-
-        <!-- [data-url] and .load -->
-        <div class="row tutorial_row">
-            <div class="col-md-8 tutorial">
-                <h3> Remote sources </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-4 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-
-                    <!-- Manual load -->
-                    <div class="p-2" id="manual_load_example">
-                        <u>page.html:</u> (hiza.engine.run) <br>
-                    </div>
-                    <script>
-                        let manual_load_url = 'https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html';
-                        hiza.engine.load(manual_load_example, manual_load_url);
-                    </script>
-                    <hr>
-                    
-                    <!-- Load remote source into template -->
-                    <div class="p-2">
-                        <u>page.html:</u> (template[data-url]) <br>
-                        <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html"></template>
-                    </div>
-                    <hr>
-
-                    <!-- Load remote source into any element (and execute scripts) -->
-                    <div hiza class="p-2 mb-4" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.html">
-                        <u>page.html:</u> (*[data-url]) <br>
-                    </div>
-                    <hr>
-
-                    <!-- Load .hiza.html -> Runs templating before insert -->
-                    <div hiza class="p-2 mb-4" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
-                        <u>page.hiza.html:</u> (*[data-url] + .hiza.html) <br>
-                    </div>
-                    <hr>
-
-                    <!--
-                        pre-fetch variables for [data-url]
-                        Note: Templates do not need to receive .hiza.html to template them
-                    -->
-                    <div class="p-2 mb-4">
-                        <u>page.html:</u> (template + .hiza.html) <br>
-                        <template hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
-                            <script hiza-sync>
-                                SCOPE['message'] = 'Hello';
-                            </script>
-
-                            <script hiza-defer>
-                                
-                                // GLOBAL scope is usable
-                                console.log(GLOBAL);
-                            </script>
-                        </template>
-                    </div>
                 </div>
             </div>
         </div>
@@ -510,6 +453,42 @@
                     <template hiza data-dest="#clock" data-interval="1000">
                         ${ new Date().toLocaleTimeString() }
                     </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- [data-url] and .load -->
+        <div class="row tutorial_row">
+            <div class="col-md-8 tutorial">
+                <h3> Remote sources </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-4 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+
+                    <!-- Load -->
+                    <div class="p-2" hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html"></div>
+                    <hr>
+                    
+                    <!-- Manual GET (for POST, send body as 3rd parameter) -->
+                    <div class="p-2" id="manual_load_example"></div>
+                    <script>
+                        let manual_load_url = 'https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html';
+                        hiza.engine.load(manual_load_example, manual_load_url);
+                    </script>
+                    <hr>
+
+                    <!-- Load with templates POST (for GET, remove data-body) -->
+                    <div class="p-2" id="hiza_load_example"></div>
+                    <template hiza data-dest="#hiza_load_example" data-interval="1000" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html" data-body="{abc:'3'}">
+
+                        <script hiza-sync>
+                            SCOPE['message'] = (SCOPE['message'] || 0) + 1;
+                        </script>
+                    </template>
+
                 </div>
             </div>
         </div>
@@ -685,21 +664,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Unfinished tutorials:</h3>
-                <ol>
-                    <li> [data-ignore_init] </li>
-                </ol>
-                <h3>TODO:</h3>
-                <ol>
-                    <li> Implement [data-reusable] *[data-url] (overwrite innerHTML) </li>
-                    <li> Comb. of template[data-url] and [data-interval] </li>
-                    <li> Fix template [data-dest] [data-url] [data-interval] combo </li>
-                </ol>
-            </div>
-        </div>
-
     </main>
 
 <script>
@@ -772,6 +736,10 @@ async function on_load() {
         if (row.classList.contains('ignore-init') == false) {
             
             for (let templ of row.querySelectorAll('[hiza]')) {
+
+                if (templ.hasAttribute("data-ignore_init")) {
+                    continue;
+                }
                 console.log('Initializing ' + templ.id);
 
                 await hiza.engine.init_one(templ);

@@ -6,7 +6,7 @@ if (typeof hiza === 'undefined') {
 hiza.engine = new function() {
 
     let GLOBAL = {};
-    this.ver = '2022-03-29';
+    this.ver = '2022-03-30';
 
     // Used to convert strings to literal chars,
     // e.g.  hiza.engine._lit`encoded newline: \n`
@@ -28,21 +28,41 @@ hiza.engine = new function() {
         return div.innerHTML;
     }
 
+    this.sleep = function (ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     this.innertext = function(html) {
         var div = document.createElement('div');
         div.innerHTML = html;
         return div.innerText;
     }
 
-    // Insert HTML or script from source without script exec
-    this.load_no_execute = async function(destination_el, url, insert_pos = 'beforeend') {
-
-        let data = await fetch(url).then(res => res.text());
+    this.fetch_remote = async function(url, body) {
         
+        let data = null;
+
+        if (typeof body === 'undefined') {
+            data = await fetch(url).then(res => res.text());
+        }
+        else {
+            data = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(body)
+            }).then(res => res.text());
+        }
+
         if (url.endsWith('.js')) {
             data = '<script>\n    // Fetched by hiza.engine: "' + url + "'\n" +
                 data.replace('\n', '\n    ').trim() + '\n</script>';
         }
+        return data;
+    }
+
+    // Insert HTML or script from source without script exec
+    this.load_no_execute = async function(destination_el, url, body, insert_pos = 'beforeend') {
+
+        let data = await hiza.engine.fetch_remote(url, body);
 
         if (destination_el.tagName == 'TEMPLATE') {
 
@@ -95,7 +115,7 @@ hiza.engine = new function() {
     }
 
     // Load HTML page
-    this.load = async function(destination_el, url) {
+    this.load = async function(destination_el, url, body) {
 
         // // Special processing for '.hiza.html' pages
         // if (url.endsWith('.hiza.html')) {
@@ -104,7 +124,7 @@ hiza.engine = new function() {
         // }
 
         // Load HTML first
-        await hiza.engine.load_no_execute(destination_el, url);
+        await hiza.engine.load_no_execute(destination_el, url, body);
 
         // Exec scripts
         await hiza.engine.exec_element_scripts(destination_el);
@@ -570,52 +590,48 @@ hiza.engine = new function() {
 
     this.init_non_template = async function(el) {
 
-        if (!el.dataset.url) {
-
-            // For now, only non-template elements that are processed are the ones with [data-url]
-            return;
+        if (el.dataset.url) {
+            await hiza.engine.load(el, el.dataset.url);
         }
         
-        let url = el.dataset.url;
-        if (url.endsWith('.hiza.html')) {
+    }
 
-            let templ = document.createElement('template');
-            el.insertAdjacentElement('beforeend', templ);
+    async function handle_remote_template(template, url) {
 
-            await hiza.engine.load_no_execute(templ, url);
-            await hiza.engine.init_one(templ);
+        // Reset initial HTML
+        template.innerHTML = template.hiza.initial_html;
+
+        let req_body;
+        if (template.hasAttribute('data-body')) {
+            req_body = JSON.parse(template.dataset.body);
         }
-        else {
-            await hiza.engine.load(el, url);
-        }
+        await hiza.engine.load_no_execute(template, template.dataset.url, req_body);
     }
 
     this.init_one = async function(template) {
 
+        // Process other type of element
         if (template.tagName != 'TEMPLATE') {
             await hiza.engine.init_non_template(template);
             return;
         }
-
-        if (template.dataset.url) {
-            await hiza.engine.load_no_execute(template, template.dataset.url);
-        }
-
-        template.hiza = {
-            run: () => hiza.engine.init_one(template),
-            interval_tid: null,
-            timeout_tid: null
-        };
-
         
-        // Find [data-dest]
-        let destination = template.dataset['dest'];
+        // Make scope
         let scope = {
             'SELF': template,
         };
+
+        // Make namespace on <template>
+        template.hiza = {
+            run: () => hiza.engine.init_one(template),
+            SCOPE: scope,
+            initial_html: template.innerHTML,
+            interval_tid: null,
+            timeout_tid: null
+        };
         
-        template.hiza.SCOPE = scope;
         
+        let destination = template.dataset['dest'];
         if (destination) {
             destination = document.querySelector(destination);
             scope['DEST'] = destination;
@@ -637,6 +653,10 @@ hiza.engine = new function() {
         };
 
         async function build_and_deploy() {
+            
+            if (template.dataset.url) {
+                await handle_remote_template(template);
+            }
 
             let templated_html = await hiza.engine.build(template.innerHTML, scope, config);
             if (destination) {
@@ -710,7 +730,7 @@ hiza.engine = new function() {
         let promises = [];
         for (let el of document.querySelectorAll('[hiza]')) {
 
-            if (el.dataset.ignore_init) {
+            if (el.hasAttribute("data-ignore_init")) {
                 continue;
             }
 

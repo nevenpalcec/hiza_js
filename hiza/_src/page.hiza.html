@@ -14,3 +14,9 @@
         ${ message }
     </p>
 </div>
+<div>
+    <h4>Received body:</h4>
+    $formatted {
+        REQUEST?.body || 'Not found.'
+    }
+</div>
