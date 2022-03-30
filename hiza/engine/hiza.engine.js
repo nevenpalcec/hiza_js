@@ -605,8 +605,13 @@ hiza.engine = new function() {
         
         if (template.hasAttribute('data-body')) {
 
+            // Parse body
             req_body = JSON.parse(template.dataset.body);
-            template.hiza.SCOPE.REQUEST['body'] = req_body;
+            
+            // Save to SCOPE.REQUEST
+            template.hiza.SCOPE.REQUEST = {
+                'body': req_body
+            };
         }
         await hiza.engine.load_no_execute(template, template.dataset.url, req_body);
     }

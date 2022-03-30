@@ -482,9 +482,9 @@
                     </script>
                     <hr>
 
-                    <!-- Load with templates POST (for GET, remove data-body) -->
+                    <!-- Load with template (for POST, set data-body attribute) -->
                     <div class="p-2" id="hiza_load_example"></div>
-                    <template hiza data-dest="#hiza_load_example" data-interval="1000" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html" data-body='{"abc":3}'>
+                    <template hiza data-dest="#hiza_load_example" data-interval="1000" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
 
                         <script hiza-sync>
                             SCOPE['message'] = (SCOPE['message'] || 0) + 1;
