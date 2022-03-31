@@ -626,6 +626,8 @@ hiza.engine = new function() {
         
         // Make scope
         let scope = {
+            ...(template?.hiza?.SCOPE || {}),
+
             'SELF': template,
             'REQUEST': {}
         };
