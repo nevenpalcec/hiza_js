@@ -762,6 +762,7 @@ window.addEventListener('load', function() {
     document.querySelectorAll('template[hiza]').forEach(template => {
         console.log('HIŽA: Setting up template ' + (template.id || ''));
 
+        // Test
         if (typeof template.hiza === 'undefined') {
 
             template.hiza = {
