@@ -760,10 +760,14 @@ hiza.engine = new function() {
 window.addEventListener('load', function() {
 
     document.querySelectorAll('template[hiza]').forEach(template => {
-        console.log('HIŽA: Init template ' + (template.id || ''));
-        template.hiza = {
-            run: () => hiza.engine.init_one(template)
-        };
+        console.log('HIŽA: Setting up template ' + (template.id || ''));
+
+        if (typeof template.hiza === 'undefined') {
+
+            template.hiza = {
+                run: () => hiza.engine.init_one(template)
+            };
+        }
     });
 });
 
