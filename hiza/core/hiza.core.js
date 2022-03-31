@@ -544,6 +544,32 @@ hiza.core = new function () {
             return date instanceof Date && date.getTime();
         }
 
+        // get local time format (short)
+        this.time_local_short = function (date, locales = 'en') {
+
+            var is_date = (date instanceof Date);
+
+            if (is_date == false) {
+                date = new Date(date);
+            }
+
+            d.toLocaleTimeString(locales || [], { hour: '2-digit', minute: '2-digit' })
+
+        }
+
+        // get local time long
+        this.time_local = function (date, locales = 'en') {
+
+            var is_date = (date instanceof Date);
+
+            if (is_date == false) {
+                date = new Date(date);
+            }
+
+            d.toLocaleTimeString(locales || [], { hour: '2-digit', minute: '2-digit' })
+
+        }
+
     }
 
     // Html manipulation
@@ -981,11 +1007,16 @@ hiza.core = new function () {
             // clear element
             element.innerHTML = '';
 
-            for (var r of data) {
-                js.html.insertAdjacentHTML(
-                    el
-                    , eval('`' + template_html + '`')
-                );
+            try {
+                for (var r of data) {
+                    js.html.insertAdjacentHTML(
+                        el
+                        , eval('`' + template_html + '`')
+                    );
+                }
+            }
+            catch (error) {
+                console.error(error);
             }
 
             // add template & load again
@@ -1015,7 +1046,7 @@ hiza.core = new function () {
             js.template.run(el, await js.http.async.post_json(url, data), template, load);
         }
 
-        this.get = async function (el, url, data) {
+        this.get = async function (el, url) {
 
             var element = document.getElementById(el);
             var templates = element.getElementsByTagName('template');
