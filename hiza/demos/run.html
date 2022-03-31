@@ -8,12 +8,13 @@
             <div class="col-md-12">
 
                 <div id="destination">
-
+                    <!-- Destination -->
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Template -->
     <template hiza id="templ" data-dest="#destination">
 
         <script hiza-sync>
@@ -31,14 +32,12 @@
         <p>
             This is an example of running &lt;template&gt;.hiza.run() and adding new variables to the scope every 5 seconds.
         </p>
-        <p>
-            Next variable: <span id="next_var"></span>
-        </p>
         <pre>
 ${ SELF.dataset.scope }
         </pre>
     </template>
 
+    <!-- Script -->
     <script>
         let var_count = 0;
 
@@ -50,4 +49,5 @@ ${ SELF.dataset.scope }
 
         }, 5000);
     </script>
+    
 </body>
