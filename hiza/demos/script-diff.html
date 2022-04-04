@@ -1,0 +1,51 @@
+<head>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/engine/favicon.png">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Hiža Engine -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js@main/hiza/engine/hiza.engine.js"></script> -->
+    <script src="/hiza/engine/hiza.engine.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            
+            <div id="dest_el"></div>
+        </div>
+    </div>
+</div>
+
+    <template hiza data-dest="#dest_el">
+
+        <h1 class="pt-4 text-center">
+            Check console and source code to see details.
+        </h1>
+
+        <script hiza-defer>
+            console.log('I am a HIŽA-defer script');
+        </script>
+
+        <script hiza-sync>
+            console.log('I am a HIŽA-sync script')
+        </script>
+
+        <script hiza-sync>
+            console.log('I am a HIŽA-async script')
+        </script>
+
+        <script>
+            console.log('I am regular script');
+        </script>
+
+    </template>
+</body>

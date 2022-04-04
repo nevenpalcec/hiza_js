@@ -74,17 +74,17 @@ hiza.engine = new function() {
         }
     }
 
-    this.exec_element_scripts = async function(parent_el) {
+    this.exec_element_scripts = async function(parent_el, remote_path='') {
 
         // Load and/or execute scripts
         let defers = [];
 
         for (let script of parent_el.querySelectorAll('script')) {
 
-            if ((script.src || '').startsWith('./')) {
+            if ((script.src || '').startsWith('./') && remote_path) {
 
                 // Allow script URLs that start with './...'
-                let dir_path = url.replace(/\/[^\/]+$/, '');
+                let dir_path = remote_path.replace(/\/[^\/]+$/, '');
                 script.src = script.src.replace(/^\.\//, dir_path);
             }
 
@@ -127,7 +127,7 @@ hiza.engine = new function() {
         await hiza.engine.load_no_execute(destination_el, url, body);
 
         // Exec scripts
-        await hiza.engine.exec_element_scripts(destination_el);
+        await hiza.engine.exec_element_scripts(destination_el, url);
 
     }
 
@@ -210,7 +210,7 @@ hiza.engine = new function() {
         scripts_rgx.forEach(rgx => {
             warnings.push(
                 'Found <script> element without [hiza-*] attribute ' +
-                'at index ' + rgx['index'] + '. Please use hiza-sync, hiza-async or hiza-defer.'
+                'at index ' + rgx['index'] + '. These scripts are run after template is done drawing.'
             );
         });
 
@@ -226,7 +226,7 @@ hiza.engine = new function() {
             let pretty_err_arr = warnings.map((er, idx) => {
                 return '\t' + (idx + 1) + ': ' + er
             }).join('\n');
-            console.warn(`HIŽA warnings:\n` + pretty_err_arr);
+            console.warn(`HIŽA notices:\n` + pretty_err_arr);
         }
     }
 
