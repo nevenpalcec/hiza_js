@@ -81,6 +81,12 @@ hiza.engine = new function() {
 
         for (let script of parent_el.querySelectorAll('script')) {
 
+            if (script.dataset.hiza_done == 'true') {
+
+                // Script has already been processed, so ignore it
+                continue;
+            }
+
             if ((script.src || '').startsWith('./') && remote_path) {
 
                 // Allow script URLs that start with './...'
@@ -108,7 +114,11 @@ hiza.engine = new function() {
                 // Sync
                 eval(await fetch(script.src).then(res => res.text()));
             }
+
+            script.dataset.hiza_done = 'true';
         }
+
+        // Run defer scripts
         for (let d_script of defers) {
             await d_script.then(eval);
         }
