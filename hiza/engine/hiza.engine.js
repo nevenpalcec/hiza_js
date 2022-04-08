@@ -119,12 +119,6 @@ hiza.engine = new function() {
     // Load HTML page
     this.load = async function(destination_el, url, body) {
 
-        // // Special processing for '.hiza.html' pages
-        // if (url.endsWith('.hiza.html')) {
-        //     hiza.engine.load_remote_hiza(destination_el, url);
-        //     return;
-        // }
-
         // Load HTML first
         await hiza.engine.load_no_execute(destination_el, url, body);
 
@@ -631,7 +625,7 @@ hiza.engine = new function() {
     async function handle_remote_template(template) {
 
         // Reset initial HTML
-        template.innerHTML = template.hiza.initial_html;
+        template.innerHTML = template?.hiza?.initial_html || '';
 
         let req_body;
         
@@ -672,10 +666,10 @@ hiza.engine = new function() {
         // Reuse values if exist
         template.hiza = {
             run: () => hiza.engine.init_one(template),
-            SCOPE: template.hiza.SCOPE || scope,
-            initial_html: template.hiza.initial_html ?? template.innerHTML,
-            interval_tid: template.hiza.interval_tid || null,
-            timeout_tid: template.hiza.timeout_tid || null,
+            SCOPE: template?.hiza?.SCOPE || scope,
+            initial_html: template?.hiza?.initial_html ?? template.innerHTML,
+            interval_tid: template?.hiza?.interval_tid || null,
+            timeout_tid: template?.hiza?.timeout_tid || null,
         };
 
         // Templating configuration

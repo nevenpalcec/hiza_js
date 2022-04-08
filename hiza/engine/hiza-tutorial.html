@@ -27,8 +27,8 @@
         var DISABLE_HIZA_INIT = true;
     </script>
     <!-- To refresh CDN, use https://purge.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js -->
-    <!-- <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script> -->
-    <script src="./hiza.engine.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script>
+    <!-- <script src="./hiza.engine.js"></script> -->
 
     <style>
 
@@ -94,7 +94,7 @@
                 <h1 class="page_title" onclick="window.open('https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/demos/engine.html', '_blank');">Demo</h1>
                 &nbsp;&nbsp;&nbsp;
                 <h1 class="page_title_sub force_init">
-                    <template hiza>
+                    <template hiza data-overwrite>
                         Ver_${ hiza.engine.ver }
                     </template>
                 </h1>
