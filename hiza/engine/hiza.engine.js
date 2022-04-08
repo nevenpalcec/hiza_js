@@ -6,7 +6,7 @@ if (typeof hiza === 'undefined') {
 hiza.engine = new function() {
 
     let GLOBAL = {};
-    this.ver = '2022-03-31';
+    this.ver = '2022-04-08';
 
     // Used to convert strings to literal chars,
     // e.g.  hiza.engine._lit`encoded newline: \n`
@@ -81,12 +81,6 @@ hiza.engine = new function() {
 
         for (let script of parent_el.querySelectorAll('script')) {
 
-            if (script.dataset.hiza_done == 'true') {
-
-                // Script has already been processed, so ignore it
-                continue;
-            }
-
             if ((script.src || '').startsWith('./') && remote_path) {
 
                 // Allow script URLs that start with './...'
@@ -114,8 +108,6 @@ hiza.engine = new function() {
                 // Sync
                 eval(await fetch(script.src).then(res => res.text()));
             }
-
-            script.dataset.hiza_done = 'true';
         }
 
         // Run defer scripts
@@ -606,6 +598,36 @@ hiza.engine = new function() {
         
     }
 
+    // Get or make destination element
+    function get_dest_el(template) {
+
+        let data_dest = template.dataset.dest;
+        let dest_el = null;
+
+        // If [data-dest] exists
+        if (data_dest) {
+            
+            dest_el = document.querySelector(data_dest);
+        }
+
+        // If not found
+        if (!dest_el) {
+
+            // If exists in scope
+            if (template.hiza.SCOPE?.DEST) {
+                return template.hiza.SCOPE['DEST'];
+            }
+
+            let warn_str = !template.id ? '.' : ` for #${template.id}.`;
+            console.warn('HIŽA: Destination element or "data-dest" attribute not found' + warn_str +
+                ' Hiža will insert a new <div> after the template.');
+            dest_el = document.createElement('div');
+            template.insertAdjacentElement('afterend', dest_el);
+        }
+        return dest_el;
+    }
+
+    // Handle [data-url]
     async function handle_remote_template(template) {
 
         // Reset initial HTML
@@ -633,71 +655,48 @@ hiza.engine = new function() {
             await hiza.engine.init_non_template(template);
             return;
         }
+
+        // Template destination
+        let dest_el = get_dest_el(template);
         
         // Make scope
         let scope = {
             ...(template?.hiza?.SCOPE || {}),
 
             'SELF': template,
+            'DEST': dest_el,
             'REQUEST': {}
         };
 
         // Make namespace on <template>
+        // Reuse values if exist
         template.hiza = {
             run: () => hiza.engine.init_one(template),
-            SCOPE: scope,
-            initial_html: template.innerHTML,
-            interval_tid: null,
-            timeout_tid: null
+            SCOPE: template.hiza.SCOPE || scope,
+            initial_html: template.hiza.initial_html ?? template.innerHTML,
+            interval_tid: template.hiza.interval_tid || null,
+            timeout_tid: template.hiza.timeout_tid || null,
         };
-        
-        
-        let destination = template.dataset['dest'];
-        if (destination) {
-            destination = document.querySelector(destination);
-            scope['DEST'] = destination;
-        }
-        else {
-            scope['DEST'] = template.parentElement;
-            console.log('Hiža: [data-dest] not found. Engine will overwrite the <template> element.')
-        }
 
         // Templating configuration
         var config = {
 
             // Defer script container
-            'defer': [
-
-                // // First defer script handles non-hiza <script> elements
-                // async () => hiza.engine.exec_element_scripts(scope['DEST'])
-            ]
+            'defer': []
         };
 
         async function build_and_deploy() {
             
+            // Remote template
             if (template.dataset.url) {
                 await handle_remote_template(template);
             }
 
+            // Generate HTML
             let templated_html = await hiza.engine.build(template.innerHTML, scope, config);
-            if (destination) {
-                destination.innerHTML = templated_html;
-            }
-            else {
-                if (template.parentElement) {
 
-                    if (typeof template.dataset.overwrite !== 'undefined') {
-                        template.parentElement.innerHTML = templated_html;
-                    }
-                    else {
-                        template.outerHTML = templated_html;
-                    }
-                }
-                else {
-                    console.error(`HIŽA: Cannot find the <template> element anymore (id=${template.id || ''}). ` +
-                        `Have you changed the parent HTML?`);
-                }
-            }
+            // Insert HTML
+            dest_el.innerHTML = templated_html;
 
             // Run defer scripts
             for (let i = 0; i < config['defer'].length; ++i) {
@@ -710,15 +709,13 @@ hiza.engine = new function() {
             }
         }
 
-        if (!destination && isNaN(template.dataset.interval) == false) {
-            console.warn('HIŽA: Cannot use [data-interval] on element without [data-dest]. Template will run once.');
-            delete template.dataset.interval;
-        }
-
+        // [data-timeout]
         if (isNaN(template.dataset.timeout) == false) {
 
             template.hiza.timeout_tid = setTimeout(build_and_deploy, template.dataset.timeout);
         }
+
+        // [data-interval]
         else if (isNaN(template.dataset.interval) == false) {
 
             clearInterval(template.hiza.interval_tid);
@@ -736,20 +733,25 @@ hiza.engine = new function() {
             }, template.dataset.interval);
             
         }
+
+        // Regular templating (no timeout and interval)
         else {
             await build_and_deploy();
         }
 
     }
 
-    this.init = async function() {
+    this.init = async function(init_el) {
 
-        // Init
-        // document.querySelectorAll('template[hiza]').forEach(hiza.engine.init_one);
+        if (typeof init_el?.querySelectorAll === 'undefined') {
+
+            // Use document if element cannot select
+            init_el = document;
+        }
 
         // Run all at once
         let promises = [];
-        for (let el of document.querySelectorAll('[hiza]')) {
+        for (let el of init_el.querySelectorAll('[hiza]')) {
 
             if (el.hasAttribute("data-ignore_init")) {
                 continue;
@@ -766,13 +768,11 @@ hiza.engine = new function() {
     }
 };
 
-// Set HIŽA namespace to template
+// Initialize HIŽA namespace
 window.addEventListener('load', function() {
 
     document.querySelectorAll('template[hiza]').forEach(template => {
-        console.log('HIŽA: Setting up template ' + (template.id || ''));
 
-        // Test
         if (typeof template.hiza === 'undefined') {
 
             template.hiza = {
