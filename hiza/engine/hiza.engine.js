@@ -614,7 +614,7 @@ hiza.engine = new function() {
         if (!dest_el) {
 
             // If exists in scope
-            if (template.hiza.SCOPE?.DEST) {
+            if (template?.hiza?.SCOPE?.DEST) {
                 return template.hiza.SCOPE['DEST'];
             }
 
