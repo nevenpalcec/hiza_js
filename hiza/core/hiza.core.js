@@ -930,6 +930,66 @@ hiza.core = new function () {
 
     }
 
+    // fetch calls
+    this.fetch = new function () {
+
+        this.get = async (url) => {
+
+            var response = await fetch(url);
+            return response;
+
+        }
+
+        this.get_json = async (url) => {
+            var response = await fetch(url);
+            var json = await response.json();
+            return json;
+        }
+
+        this.post = async (url, body) => {
+
+            if (typeof body !== 'string') {
+                body = JSON.stringify(body);
+            }
+
+            var respone = await fetch(url, { method: 'post', body: body });
+
+            return respone;
+
+        }
+
+        this.post_json = async (url, body) => {
+
+            if (typeof body !== 'string') {
+                body = JSON.stringify(body);
+            }
+
+            var respone = await fetch(url, { method: 'post', body: body });
+            var json = await respone.json();
+
+            return json;
+
+        }
+
+        this.submit = async (div, url) => {
+
+            var body = await hiza.core.template.div_to_json(div);
+            var response = await hiza.core.fetch.post(url, body);
+            return response;
+
+        }
+
+        this.submit_json = async (div, url) => {
+
+            var body = await hiza.core.template.div_to_json(div);
+            var response = await hiza.core.fetch.post(url, body);
+            var json = response.json();
+            return json();
+
+        }
+
+    }
+
     // loadcion
     this.location = new function () {
 
@@ -1209,6 +1269,21 @@ hiza.core = new function () {
             return ret_arr;
         }
 
+        // convert all intputs with data-hiza_id to json
+        this.div_to_json = async (div) => {
+
+            var div = document.getElementById(div);
+            var inputs = div.querySelectorAll('[data-hiza_id]');
+
+            // get json body
+            var json = {};
+            await inputs.forEach(async (e) => {
+                json[e.dataset.hiza_id] = e.value;
+            });
+
+            return json;
+
+        }
     }
 
 }
