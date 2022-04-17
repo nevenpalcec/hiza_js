@@ -971,7 +971,11 @@ hiza.core = new function () {
 
         }
 
-        this.submit = async (div, url) => {
+        this.submit = async function (div, url) {
+
+            if (!url) {
+                url = document.getElementById(div).dataset.url;
+            }
 
             var body = await hiza.core.template.div_to_json(div);
             var response = await hiza.core.fetch.post(url, body);
@@ -979,7 +983,11 @@ hiza.core = new function () {
 
         }
 
-        this.submit_json = async (div, url) => {
+        this.submit_json = async function (div, url) {
+
+            if (!url) {
+                url = document.getElementById(div).dataset.url;
+            }
 
             var body = await hiza.core.template.div_to_json(div);
             var response = await hiza.core.fetch.post(url, body);
