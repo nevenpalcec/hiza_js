@@ -9,6 +9,21 @@ hiza.core = new function () {
         alert('JS tets: OK!');
     };
 
+    // Make object and listen for its changes
+    // - getter -> function(obj_in, key)
+    // - setter -> function(obj_in, key, new_val)
+    this.make_obj = function(obj_in, getter, setter) {
+
+        var cfg = {};
+        if (typeof getter === 'function') {
+            cfg['get'] = getter;
+        }
+        if (typeof setter === 'function') {
+            cfg['set'] = setter;
+        }
+        return new Proxy(obj_in, cfg);
+    }
+
     // form logic
     this.form = new function () {
 
