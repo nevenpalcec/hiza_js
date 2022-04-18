@@ -933,20 +933,20 @@ hiza.core = new function () {
     // fetch calls
     this.fetch = new function () {
 
-        this.get = async (url) => {
+        this.get = async function (url) {
 
             var response = await fetch(url);
             return response;
 
         }
 
-        this.get_json = async (url) => {
+        this.get_json = async function (url) {
             var response = await fetch(url);
             var json = await response.json();
             return json;
         }
 
-        this.post = async (url, body) => {
+        this.post = async function (url, body) {
 
             if (typeof body !== 'string') {
                 body = JSON.stringify(body);
@@ -958,7 +958,7 @@ hiza.core = new function () {
 
         }
 
-        this.post_json = async (url, body) => {
+        this.post_json = async function (url, body) {
 
             if (typeof body !== 'string') {
                 body = JSON.stringify(body);
@@ -1278,7 +1278,7 @@ hiza.core = new function () {
         }
 
         // convert all intputs with data-hiza_id to json
-        this.div_to_json = async (div) => {
+        this.div_to_json = async function (div) {
 
             var div = document.getElementById(div);
             var inputs = div.querySelectorAll('[data-hiza_id]');
