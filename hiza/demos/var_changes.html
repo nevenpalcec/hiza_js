@@ -68,10 +68,10 @@ function set(obj_in, key, val) {
 var test = hiza.core.make_obj({}, get, set);
 
 
-// Trigger getter
+// Trigger setter
 test.today = new Date(2021, 1, 1);
 
-// Trigger setter
+// Trigger getter
 console.log('Today is ' + test.today);
 
 `);
