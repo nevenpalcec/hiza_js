@@ -14,10 +14,11 @@ hiza.import = new function() {
     }
 
     // Import script to current page
-    this.script = function(url) {
+    this.script = function(url, callback) {
         
         var fp_script = document.createElement('script');
         fp_script.src = url;
+        fp_script.onload = callback;
         document.head.appendChild(fp_script);
     }
 
