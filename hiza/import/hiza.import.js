@@ -21,4 +21,24 @@ hiza.import = new function() {
         document.head.appendChild(fp_script);
     }
 
+    this.html = async function(destination_el, url) {
+
+        destination_el.innerHTML = await fetch(url).then(res => res.text());
+
+        // Note: stylesheets are loaded by default
+
+        // Load scripts
+        let scripts = destination_el.querySelectorAll('script');
+
+        for (let s of scripts) {
+
+            if (s.src) {
+                eval(await fetch(s.src).then(res => res.text()));
+            }
+            else {
+                eval(s.innerText);
+            }
+        }
+    }
+
 }
