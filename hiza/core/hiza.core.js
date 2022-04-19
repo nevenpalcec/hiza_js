@@ -9,6 +9,21 @@ hiza.core = new function () {
         alert('JS tets: OK!');
     };
 
+    // Make object and listen for its changes
+    // - getter -> function(obj_in, key)
+    // - setter -> function(obj_in, key, new_val)
+    this.make_obj = function(obj_in, getter, setter) {
+
+        var cfg = {};
+        if (typeof getter === 'function') {
+            cfg['get'] = getter;
+        }
+        if (typeof setter === 'function') {
+            cfg['set'] = setter;
+        }
+        return new Proxy(obj_in, cfg);
+    }
+
     // form logic
     this.form = new function () {
 
@@ -930,6 +945,74 @@ hiza.core = new function () {
 
     }
 
+    // fetch calls
+    this.fetch = new function () {
+
+        this.get = async function (url) {
+
+            var response = await fetch(url);
+            return response;
+
+        }
+
+        this.get_json = async function (url) {
+            var response = await fetch(url);
+            var json = await response.json();
+            return json;
+        }
+
+        this.post = async function (url, body) {
+
+            if (typeof body !== 'string') {
+                body = JSON.stringify(body);
+            }
+
+            var respone = await fetch(url, { method: 'post', body: body });
+
+            return respone;
+
+        }
+
+        this.post_json = async function (url, body) {
+
+            if (typeof body !== 'string') {
+                body = JSON.stringify(body);
+            }
+
+            var respone = await fetch(url, { method: 'post', body: body });
+            var json = await respone.json();
+
+            return json;
+
+        }
+
+        this.submit = async function (div, url = '') {
+
+            if (!url) {
+                url = document.getElementById(div).dataset.url;
+            }
+
+            var body = await hiza.core.template.div_to_json(div);
+            var response = await hiza.core.fetch.post(url, body);
+            return response;
+
+        }
+
+        this.submit_json = async function (div, url = '') {
+
+            if (!url) {
+                url = document.getElementById(div).dataset.url;
+            }
+
+            var body = await hiza.core.template.div_to_json(div);
+            var response = await hiza.core.fetch.post(url, body);
+            var json = response.json();
+            return json();
+
+        }
+
+    }
+
     // loadcion
     this.location = new function () {
 
@@ -1209,6 +1292,21 @@ hiza.core = new function () {
             return ret_arr;
         }
 
+        // convert all intputs with data-hiza_id to json
+        this.div_to_json = async function (div) {
+
+            var div = document.getElementById(div);
+            var inputs = div.querySelectorAll('[data-hiza_id]');
+
+            // get json body
+            var json = {};
+            await inputs.forEach(async (e) => {
+                json[e.dataset.hiza_id] = e.value;
+            });
+
+            return json;
+
+        }
     }
 
 }
