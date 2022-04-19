@@ -22,9 +22,27 @@ hiza.import = new function() {
         document.head.appendChild(fp_script);
     }
 
-    // Load html with its css and js
+    // Load HTML and its CSS, JS
     this.html = async function(destination_el, url) {
-        destination_el.innerHTML = `<object type="text/html" data="${url}" ></object>`;
+
+        // Load HTML into destination element
+        destination_el.innerHTML = await fetch(url).then(res => res.text());
+        
+        // Load scripts
+        let scripts = destination_el.querySelectorAll('script');
+        
+        for (let s of scripts) {
+            
+            if (s.src) {
+                eval(await fetch(s.src).then(res => res.text()));
+            }
+            else {
+                eval(s.innerText);
+            }
+        }
+
+        // Stylesheets are loaded by default
     }
+
 
 }
