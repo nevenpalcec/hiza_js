@@ -26,7 +26,7 @@ hiza.import = new function() {
     this.run_globally = function(javascript) {
 
         var fp_script = document.createElement('script');
-        fp_script.innerText = javascript;
+        fp_script.innerHTML = javascript;
         document.body.append(fp_script);
     }
 
