@@ -22,6 +22,14 @@ hiza.import = new function() {
         document.head.appendChild(fp_script);
     }
 
+    // Run script in global scope
+    this.run_globally = function(javascript) {
+
+        var fp_script = document.createElement('script');
+        fp_script.innerText = javascript;
+        document.body.append(fp_script);
+    }
+
     // Load HTML and its CSS, JS
     this.html = async function(destination_el, url) {
 
@@ -34,10 +42,10 @@ hiza.import = new function() {
         for (let s of scripts) {
             
             if (s.src) {
-                eval(await fetch(s.src).then(res => res.text()));
+                hiza.import.run_globally(await fetch(s.src).then(res => res.text()));
             }
             else {
-                eval(s.innerText);
+                hiza.import.run_globally(s.innerText);
             }
         }
 
