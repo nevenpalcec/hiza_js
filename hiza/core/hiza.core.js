@@ -507,7 +507,9 @@ hiza.core = new function () {
 
         // convert string to valid js date
         this.get_valid_date = function (date) {
-            return new Date(date);
+            var d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            return d;
         }
 
         // check if day is betwween dates
