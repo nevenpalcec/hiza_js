@@ -403,14 +403,16 @@ hiza.core = new function () {
 
         //add days to date
         this.add_day = function (date, days) {
-            var r = date;
-            if ((date instanceof Date) == false) {
-                r = new Date(date + '  00:00:00');
-            }
-            r.setDate(r.getDate() + days);
-            // var date = r.getFullYear() + '-' + ('0' + r.getMonth()).slice(-2) + '-' + r.getDate();
-            var date = this.toIso(r);
-            return date;
+
+            // Copy to avoid changing the original
+            var date_copy = new Date(date);
+
+            // Ignore time
+            date_copy.setHours(0, 0, 0);
+
+            date_copy.setDate(date_copy.getDate() + days);
+            var date_iso = this.toIso(r);
+            return date_iso;
         }
 
         // convert date to ISO but, eliminate time offset (timezone)

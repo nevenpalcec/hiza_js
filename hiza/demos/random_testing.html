@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/core/hiza.core.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script>
+</head>
+<body>
+    
+    <template hiza>
+        
+        ${ hiza.core.date.add_day(new Date(2022, 3, 26, 23, 59, 59), -1) }
+        <br>
+        ${ hiza.core.date.toIso(new Date()) }
+        <br>
+        ${ hiza.core.date.add_day(new Date(), 1) }
+
+    </template>
+
+</body>
+</html>
