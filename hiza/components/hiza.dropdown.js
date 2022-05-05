@@ -4,6 +4,17 @@ if (typeof hiza === 'undefined') {
 
 hiza.dropdown = new function() {
 
+    function set_selected(items, li) {
+        
+        for (let item of items) {
+            item.classList.remove('selected');
+        }
+
+        if (li.dataset.value) {
+            li.classList.add('selected');
+        }
+    }
+
     function setup_ui(dropdown) {
 
         console.log(dropdown);
@@ -17,6 +28,13 @@ hiza.dropdown = new function() {
         let no_result_el = dropdown.querySelector(".no_result");
         let input_el = dropdown.querySelector('.hiza_dropdown-input');
         let items = dropdown.querySelectorAll('.hiza_dropdown-item');
+
+        // When clicked, mark it as '.selected'
+        for (let item of items) {
+            item.addEventListener('click', function() {
+                set_selected(items, item);
+            });
+        }
 
         if (dropdown.classList.contains('search', 'icon')) {
 
@@ -78,8 +96,10 @@ hiza.dropdown = new function() {
 
             // Click on select will close dropdown menu
             for (let i = 0; i < items.length; i++) {
+
                 const element = items[i];
-                element.onclick = function (e) {
+
+                element.onclick = function (e) {                    
                     btn_box.innerHTML = e.target.innerHTML;
                     input_el.setAttribute("data-value", e.target.dataset.value);
                     menu.classList.remove("show");
@@ -172,7 +192,8 @@ hiza.dropdown = new function() {
             return items.map(it => it.dataset.value);
         }
         function get_value() {
-            return input_el.value;
+            return ddmenu.querySelector('.selected')?.dataset.value;
+            // return input_el.value;
         }
         function set_value(val) {
 
