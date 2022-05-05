@@ -1,5 +1,3 @@
-// New JS (old js is inside hiza-dropdown.js)
-
 if (typeof hiza === 'undefined') {
     var hiza = {};
 }
