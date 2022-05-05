@@ -1,10 +1,47 @@
 
+/* Fade in */
+
+.h-fade_in-fast {
+    animation: h-fade_in .25s;
+}
 .h-fade_in {
-    animation: h-fade_in .5s;
+    animation: h-fade_in 1s;
+}
+.h-fade_in-slow {
+    animation: h-fade_in 2s;
 }
 
+.h-fade_in-fast-keep {
+    animation: h-fade_in .25s forwards;
+}
+.h-fade_in-keep {
+    animation: h-fade_in 1s forwards;
+}
+.h-fade_in-slow-keep {
+    animation: h-fade_in 2s;
+    animation-fill-mode: forwards;
+}
+
+/* Fade out */
+
+.h-fade_out-fast {
+    animation: h-fade_out .25s;
+}
 .h-fade_out {
-    animation: h-fade_out .5s;
+    animation: h-fade_out 1s;
+}
+.h-fade_out-slow {
+    animation: h-fade_out 2s;
+}
+
+.h-fade_out-fast-keep {
+    animation: h-fade_out .25s forwards;
+}
+.h-fade_out-keep {
+    animation: h-fade_out 1s forwards;
+}
+.h-fade_out-slow-keep {
+    animation: h-fade_out 2s forwards;
 }
 
 @keyframes h-fade_in {

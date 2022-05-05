@@ -7,40 +7,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HIŽA Anim</title>
 
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <style>
+    <!-- Hiža anim -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.anim.css">
+    <!-- <link rel="stylesheet" href="/hiza/components/hiza.anim.css"> -->
 
-        #div_fade_in {
+    <!-- highlight js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"
+        integrity="sha512-yUUc0qWm2rhM7X0EFe82LNnv2moqArj5nro/w1bi05A09hRVeIZbN6jlMoyu0+4I/Bu4Ck/85JQIU82T82M28w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css"
+        integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .tutorial-col {
+            padding: 15px;
+            border: 1px solid black;
+            margin-bottom: 3rem;
+        }
+
+        .col-md-12>p {
+            position: relative;
+        }
+
+        .col-md-12>div {
+            display: inline-block;
             height: 100px;
             width: 100px;
             background: black;
             border-radius: 10px;
         }
+
+        code {
+            display: inline-block !important;
+            padding: .5rem;
+            background: #282c34;
+        }
+
+        .title {
+            font-size: 1.2rem;
+        }
+        .title span {
+            color: red;
+        }
+
+        #div_1,
+        #div_2,
+        #div_3 {
+            opacity: 0;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+        h1 {
+            display: inline-block;
+            border-bottom: 1px solid black;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container pt-4">
         <div class="row">
 
-            <div class="col-md-12">
-                <h3>
-                    anim.fade_in
-                </h3>
+            <div class="col-md-12 mb-4">
+
+                <h1> HIŽA animations </h1>
+
+                <p class="title">
+                    How to use classes:
+
+                    <br> &nbsp;&nbsp;&nbsp;
+
+                    h-<span>anim_name</span>-<span>speed</span>-<span>type</span>
+                </p>
+            </div>
+
+            <div class="col-md-12 tutorial-col">
+                <h3>Fade in/out</h3>
+                <ul>
+                    <li>
+                        <span class="text-danger">anim_name</span> = fade_in, fade_out
+                    </li>
+                    <li>
+                        <span class="text-danger">speed</span> = 'slow', 'fast' or empty
+                    </li>
+                    <li>
+                        <span class="text-danger">type</span> = 'keep' or empty
+                    </li>
+                </ul>
                 <p>
-                    <button class="btn btn-success" onclick="
-                        hiza.anim.fade_in(div_fade_in);
-                    ">
+                    <button class="btn btn-success mb-1" onclick="run('fade_in');">
                         Run
                     </button>
+                    <code id="code_fade_in">
+                        div_1.classList.add('h-fade_in');
+                        div_2.classList.add('h-fade_in-slow');
+                        div_3.classList.add('h-fade_in-fast-keep');
+                        div_4.classList.add('h-fade_out-keep');
+                    </code>
                 </p>
-                <div id="div_fade_in"></div>
+                <div id="div_1"></div>
+                <div id="div_2"></div>
+                <div id="div_3"></div>
+                <div id="div_4"></div>
             </div>
         </div>
     </div>
 
+    <script>
+        function run(anim_type) {
+            let el = document.getElementById('code_' + anim_type);
+            eval(el.innerText);
+        }
+
+        for (let code of document.querySelectorAll('code')) {
+
+            code.innerHTML = code.innerHTML.replace(/\n\s*/g, '\n').trim();
+            code.outerHTML = '<pre>' + code.outerHTML + '</pre>'
+            code.classList.add('language-javascript');
+        }
+        hljs.highlightAll();
+    </script>
 </body>
 
 </html>
