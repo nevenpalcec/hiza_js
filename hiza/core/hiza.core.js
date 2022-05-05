@@ -411,7 +411,7 @@ hiza.core = new function () {
             date_copy.setHours(0, 0, 0);
 
             date_copy.setDate(date_copy.getDate() + days);
-            var date_iso = this.toIso(r);
+            var date_iso = this.toIso(date_copy);
             return date_iso;
         }
 
