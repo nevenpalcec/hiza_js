@@ -110,19 +110,16 @@
         <div class="row tutorial_row force_init">
             <div class="col-md-12 tutorial">
                 <h3> Import </h3>
-                <template hiza>
-                    <pre>
-                        <code class="language-html">
-                            $encode {
-                            ${'<'}!-- Get latest version --${'>'}
-                    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script>
-                    
-                    ${'<'}!-- Get stable version --${'>'}
-                    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine-lts.js"></script>
-                            }
-                        </code>
-                    </pre>
-                </template>
+
+                <pre>
+                    <code class="language-html">
+                        &lt;!-- Get latest version --&gt;
+                    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
+            
+                    &lt;!-- Get stable version --&gt;
+                    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine-lts.js"&gt;&lt;/script&gt;
+                    </code>
+                </pre>
             </div>
         </div>
 
@@ -139,52 +136,7 @@
                     <div id="container"></div>
 
                     <template id="templ_id" hiza data-dest="#container">
-                        Hello world!
-                    </template>
-                </div>
-            </div>
-        </div>
-
-        <!-- Inline template (one-time) -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3>
-                    Inline template
-                </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <template hiza>
-                        I am an inline template. <br>
-                        I get destroyed after building.
-                    </template>
-                </div>
-            </div>
-        </div>
-
-        <!-- Insert variables -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3>
-                    Variables
-                </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <!-- Script outside of <template hiza> -->
-                    <script>
-                        let example = 'Steve';
-                    </script>
-
-                    <template hiza>
-                        Hello ${ example } <br>
-                        This is an inline variable: ${ 3 == 3 ? 'Hello!' : 'Not found.' }
+                        Hello ${ 'World' }!
                     </template>
                 </div>
             </div>
@@ -215,6 +167,50 @@
 
                     </template>
 
+                </div>
+            </div>
+        </div>
+
+        <!-- Inline template (one-time) -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3>
+                    Inline template
+                </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        This is an inline template. <br>
+                        Without [data-dest], its contents are put into <br>
+                        a newly generated div element put after it.
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insert variables -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3>
+                    Use variables
+                </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <script>
+                        let example = 'Steve';
+                    </script>
+
+                    <template hiza>
+                        Hello ${ example }
+                    </template>
                 </div>
             </div>
         </div>
@@ -403,7 +399,7 @@
         <!-- [data-overwrite] keyword -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> [data-overwrite] </h3>
+                <h3> Overwriting </h3>
                 <pre></pre>
             </div>
 
@@ -428,15 +424,6 @@
                         After.
                     </p>
 
-                    <!-- Without [data-dest], with [data-overwrite] overwrites innerHTML -->
-                    <p>
-                        Before.
-                        <template hiza data-overwrite>
-                            Inside.
-                        </template>
-                        After.
-                    </p>
-
                 </div>
             </div>
         </div>
@@ -451,10 +438,8 @@
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <h4 id="clock"></h4>
-                    
                     <!-- Run each second -->
-                    <template hiza data-dest="#clock" data-interval="1000">
+                    <template hiza data-interval="1000">
                         ${ new Date().toLocaleTimeString() }
                     </template>
                 </div>
@@ -472,20 +457,24 @@
                 <h3> &nbsp; </h3>
                 <div class="result">
 
-                    <!-- Load -->
-                    <div class="p-2" hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html"></div>
-                    <hr>
+                    <!-- Load with [data-url] -->
+                    <p> 1. Load HTML into a div (raw HTML) </p>
+                    <div class="border" hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html"></div>
                     
-                    <!-- Manual GET (for POST, send body as 3rd parameter) -->
-                    <div class="p-2" id="manual_load_example"></div>
+                    <p> 2. Manual load (raw HTML) </p>
+                    <div class="p-2 mb-2 border" id="manual_load_example"></div>
                     <script>
                         let manual_load_url = 'https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html';
-                        hiza.engine.load(manual_load_example, manual_load_url);
+                        hiza.engine.load(manual_load_example, manual_load_url);  // GET
+                        //hiza.engine.load(manual_load_example, manual_load_url, body);  // POST
                     </script>
-                    <hr>
 
-                    <!-- Load with template (for POST, set data-body attribute) -->
-                    <div class="p-2" id="hiza_load_example"></div>
+                    <!-- 
+                        [data-url] appends HTML to template
+                        NOTE: To load with a POST request, set a [data-body] parameter
+                    -->
+                    <p> 3. Manual load (HIŽA Templating) </p>
+                    <div class="p-2 border" id="hiza_load_example"></div>
                     <template hiza data-dest="#hiza_load_example" data-interval="1000" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
 
                         <script hiza-sync>
@@ -500,7 +489,7 @@
         <!-- Manual templating -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Manual - &lt;template&gt;.hiza.run() </h3>
+                <h3> &lt;template&gt;.hiza.run() </h3>
                 <pre></pre>
             </div>
 
@@ -705,6 +694,9 @@ function apply_custom_color(code) {
 }
 
 function highlight_code(pre) {
+
+    console.log(pre.innerText);
+    console.log(pre.innerHTML);
 
     let highlighted = hljs.highlightAuto(pre.innerText).value;
     pre.innerHTML = `<code class="language-html">${highlighted}</code>`;
