@@ -32,6 +32,23 @@
 
     <style>
 
+        body:not(.loaded) {
+            opacity: 0;
+        }
+
+        body.loaded {
+            animation: fade_in 1s forwards;
+        }
+
+        @keyframes fade_in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         .row {
             border-bottom: 1px solid lightgray;
             padding-bottom: 1rem;
@@ -747,7 +764,10 @@ async function on_load() {
 
 };
 
-on_load();
+on_load().finally(function() {
+
+    document.body.classList.add('loaded');
+});
 
 </script>
 
