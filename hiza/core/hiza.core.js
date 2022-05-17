@@ -534,10 +534,15 @@ hiza.core = new function () {
 
         // check if one date is smaller then the other
         this.is_date_smaler = function (smallerDate, biggerDate) {
+
+            // Make a copy
+            smallerDate = new Date(smallerDate);
+            biggerDate = new Date(biggerDate);
+
+            // Nullify time and then compare
             smallerDate.setHours(0, 0, 0, 0);
             biggerDate.setHours(0, 0, 0, 0);
-            if (smallerDate < biggerDate) return true;
-            return false;
+            return smallerDate < biggerDate;
         }
 
         // day of the mounth
