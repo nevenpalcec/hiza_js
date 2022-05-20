@@ -9,9 +9,23 @@
 
 ## hiza.engine
 [Open tutorial](https://app.my-rents.com/web/hiza-tutorial.html)
+```html
+<!-- Ever wanted to use a RAZOR-like synthax in HTML? -->
+<template hiza>
+    $if (3 == 2) {
+        <h5> 3 == 2 </h5>
+    }
+    $else if (4 == 3) {
+        <h5> 4 == 3 </h5>
+    }
+    $else {
+        <h5> None of the conditions have been met. </h5>
+    }
+</template>
+```
 
 ## hiza.dropdown
-```
+```html
 <div id="dropdown_example" class="hiza_dropdown">
     <button class="hiza_dropdown-btn hiza_dropdown-toggle" type="button" style="max-width: 13rem;"
         data-value="02">Select example</button>
