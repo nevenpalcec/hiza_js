@@ -36,4 +36,8 @@ hiza.dropdown - [css](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/compo
         <li class="hiza_dropdown-item" data-value="03">Example 03</li>
     </ul>
 </div>
+
+<script>
+    hiza.dropdown.init('#dropdown_example');
+</script>
 ```
