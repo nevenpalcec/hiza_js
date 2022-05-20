@@ -7,10 +7,10 @@
 [hiza.dropdown](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.dropdown.js)  
 [hiza.anim](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.anim.css)
 
-### hiza.engine
+## hiza.engine
 [Open tutorial](https://app.my-rents.com/web/hiza-tutorial.html)
 
-### hiza.dropdown
+## hiza.dropdown
 ```
 <div id="dropdown_example" class="hiza_dropdown">
     <button class="hiza_dropdown-btn hiza_dropdown-toggle" type="button" style="max-width: 13rem;"
