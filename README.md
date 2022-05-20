@@ -4,7 +4,7 @@
 [hiza.core](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/core/hiza.core.js)  
 [hiza.engine](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js)  
 [hiza.import](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/import/hiza.import.js)  
-[hiza.anim](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.anim.css)
+[hiza.anim](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.anim.css)  
 hiza.dropdown - [css](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.dropdown.js)
                 [js](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/components/hiza.dropdown.css)  
 
