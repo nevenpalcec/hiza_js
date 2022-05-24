@@ -150,9 +150,8 @@
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <div id="container"></div>
-
-                    <template id="templ_id" hiza data-dest="#container">
+                    <!-- Generate HTML -->
+                    <template id="templ_id" hiza>
                         Hello ${ 'World' }!
                     </template>
                 </div>
@@ -189,7 +188,7 @@
         </div>
 
         <!-- Inline template (one-time) -->
-        <div class="row tutorial_row">
+        <div class="row tutorial_row d-none">
             <div class="col-md-6 tutorial">
                 <h3>
                     Inline template
@@ -213,7 +212,7 @@
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3>
-                    Use variables
+                    Variables
                 </h3>
                 <pre></pre>
             </div>
@@ -232,29 +231,139 @@
             </div>
         </div>
 
-        <!-- $for -->
+        <!-- [data-interval] -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Looping </h3>
+                <h3> [data-interval] </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <script>
-                        let numbers = [1, 2, 3];
-                    </script>
+                    <!-- Run each second -->
+                    <template hiza data-interval="1000">
+                        Time is ${ new Date().toLocaleTimeString() }
+                    </template>
+                </div>
+            </div>
+        </div>
 
+        <!-- <script hiza-*> -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Scripts inside template </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial d-none">
+                <h3> &nbsp; </h3>
+                <div class="result">
                     <template hiza>
-                            $for (let i = 0; i < numbers.length; ++i) {
-                                <span> ${ numbers[i] } </span>
-                            }
+                        <script hiza-sync>
+                            // Runs during template generation
+                        </script>
 
-                            <br>
-                            $for (let num of numbers) {
-                                <span> ${ num } </span>
-                            }
+                        <script hiza-async>
+                            // Runs during generation (inline await allowed)
+                        </script>
+
+                        <script hiza-defer>
+                            // Runs after generated template is inserted
+                        </script>
+
+                        <script>
+                            // Runs after generated template is inserted
+
+                            // IMPORTANT: difference between HIŽA scripts and regular scripts inside the template is that HIŽA scripts can use HIŽA keywords
+                        </script>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCOPE keyword -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Keywords </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <template hiza>
+                        <script hiza-sync>
+                            // Save value to local scope
+                            SCOPE['obj_len'] = 13;
+                            // Save value to global scope
+                            GLOBAL['obj_len'] = 13;
+                        </script>
+
+                        <!-- Use scope variable -->
+                        <p>
+                            I have found ${obj_len} objects.
+                        </p>
+                    </template>
+
+                    <!-- Use GLOBAL variable in another template -->
+                    <template hiza>
+                        I have found this in GLOBAL scope: ${ GLOBAL['obj_len'] }
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual templating -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> Run manually </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                        <button class="btn btn-success w-100" onclick="cat_template.hiza.run()">Run</button>
+
+                    <template id="cat_template" hiza>
+                        <script hiza-async>
+
+                            // Fetch example api
+                            let res = await fetch('https://catfact.ninja/fact').then(res => res.json());
+
+                            // Store globally
+                            GLOBAL['cat_fact'] = res;
+                        </script>
+
+                        <p>
+                            ${ GLOBAL['cat_fact']['fact'] }
+                        </p>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- [data-timeout] -->
+        <div class="row tutorial_row">
+            <div class="col-md-6 tutorial">
+                <h3> [data-timeout] </h3>
+                <pre></pre>
+            </div>
+
+            <div class="col-md-6 tutorial">
+                <h3> &nbsp; </h3>
+                <div class="result">
+                    <div class="mb-2">
+                        <button class="btn btn-success"
+                            onclick="timeout_template.hiza.run()">Run with 1s delay</button>
+                    </div>
+
+                    <h4 id="timeout_container">
+                    </h4>
+
+                    <template id="timeout_template" hiza data-dest="#timeout_container" data-timeout="1000">
+                        ${ new Date().toLocaleTimeString() }
                     </template>
                 </div>
             </div>
@@ -283,71 +392,6 @@
                     </template>
 
                     Template rendered.
-                </div>
-            </div>
-        </div>
-
-        <!-- <script hiza-*> -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> &lt;script hiza-*&gt; </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial d-none">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <template hiza>
-                        <script hiza-sync>
-                            // Runs as sync function
-                        </script>
-
-                        <script hiza-async>
-                            // Runs as async function (await allowed)
-                        </script>
-
-                        <script hiza-defer>
-                            // Runs after templating is finished
-                        </script>
-
-                        <script>
-                            // Regular JS script
-                            // Runs after templating is finished (no access to SCOPE)
-                        </script>
-                    </template>
-                </div>
-            </div>
-        </div>
-
-        <!-- SCOPE keyword -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> SCOPE keyword </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <template hiza>
-
-                        <!-- Script inside <template hiza> -->
-                        <script hiza-sync>
-                            let object_count = 13;
-
-                            // Save variable to scope
-                            SCOPE['obj_len'] = object_count;
-
-                            // Check console to see SCOPE variables
-                            console.log('Scope contains...');
-                            console.log(SCOPE);
-                        </script>
-
-                        <p>
-                            <!-- Use scope variable -->
-                            I have found ${obj_len} objects.
-                        </p>
-                    </template>
                 </div>
             </div>
         </div>
@@ -382,37 +426,6 @@
             </div>
         </div>
 
-        <!-- GLOBAL keyword -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> GLOBAL keyword </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <!-- First template -->
-                    <template hiza>
-                        <script hiza-sync>
-                            let data = 'I can be used globally';
-
-                            // Save data for all HIŽA templates
-                            GLOBAL['data'] = data;
-                        </script>
-
-                        Saving <em>${ GLOBAL['data'] }</em>...
-                    </template>
-                    <br>
-
-                    <!-- Second template -->
-                    <template hiza>
-                        I have found this text: <em>${ GLOBAL['data'] }</em>
-                    </template>
-                </div>
-            </div>
-        </div>
-
         <!-- [data-overwrite] keyword -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
@@ -441,24 +454,6 @@
                         After.
                     </p>
 
-                </div>
-            </div>
-        </div>
-
-        <!-- [data-interval] -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> [data-interval] </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <!-- Run each second -->
-                    <template hiza data-interval="1000">
-                        ${ new Date().toLocaleTimeString() }
-                    </template>
                 </div>
             </div>
         </div>
@@ -499,70 +494,6 @@
                         </script>
                     </template>
 
-                </div>
-            </div>
-        </div>
-
-        <!-- Manual templating -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> &lt;template&gt;.hiza.run() </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <div class="mb-4">
-                        <button class="btn btn-success w-100" onclick="cat_template.hiza.run()">Run</button>
-                    </div>
-
-                    <h4 id="cat_container" class="text-center">
-                        <!-- Template result goes here -->
-                    </h4>
-
-                    <template id="cat_template" hiza data-dest="#cat_container">
-                        <script hiza-async>
-
-                            // Show loading on #cat_container
-                            SCOPE.DEST.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
-
-                            // Fetch example api
-                            let res = await fetch('https://catfact.ninja/fact').then(res => res.json());
-
-                            // Store globally
-                            GLOBAL['cat_fact'] = res;
-                        </script>
-
-                        <p>
-                            ${ GLOBAL['cat_fact']['fact'] }
-                        </p>
-                    </template>
-                </div>
-            </div>
-        </div>
-
-        <!-- [data-timeout] -->
-        <div class="row tutorial_row">
-            <div class="col-md-6 tutorial">
-                <h3> [data-timeout] </h3>
-                <pre></pre>
-            </div>
-
-            <div class="col-md-6 tutorial">
-                <h3> &nbsp; </h3>
-                <div class="result">
-                    <div class="mb-2">
-                        <button class="btn btn-success"
-                            onclick="timeout_template.hiza.run()">Run with 1s delay</button>
-                    </div>
-
-                    <h4 id="timeout_container">
-                    </h4>
-
-                    <template id="timeout_template" hiza data-dest="#timeout_container" data-timeout="1000">
-                        ${ new Date().toLocaleTimeString() }
-                    </template>
                 </div>
             </div>
         </div>
