@@ -126,15 +126,15 @@
         <!-- How to import -->
         <div class="row tutorial_row force_init">
             <div class="col-md-12 tutorial">
-                <h3> Import </h3>
+                <h3> 1. Import </h3>
 
                 <pre>
                     <code class="language-html">
                         &lt;!-- Get latest version --&gt;
                     &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"&gt;&lt;/script&gt;
             
-                    &lt;!-- Get stable version --&gt;
-                    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine-lts.js"&gt;&lt;/script&gt;
+                    <!-- &lt;!-- Get stable version --&gt;
+                    &lt;script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine-lts.js"&gt;&lt;/script&gt; -->
                     </code>
                 </pre>
             </div>
@@ -143,7 +143,7 @@
         <!-- Getting started -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Getting started </h3>
+                <h3> 2. Getting started </h3>
                 <pre></pre>
             </div>
 
@@ -151,7 +151,7 @@
                 <h3> &nbsp; </h3>
                 <div class="result">
                     <!-- Generate HTML -->
-                    <template id="templ_id" hiza>
+                    <template hiza>
                         Hello ${ 'World' }!
                     </template>
                 </div>
@@ -161,7 +161,7 @@
         <!-- $if, $else if, $else -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Branching </h3>
+                <h3> 3. Branching </h3>
                 <pre></pre>
             </div>
 
@@ -212,7 +212,7 @@
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
                 <h3>
-                    Variables
+                    4. Variables
                 </h3>
                 <pre></pre>
             </div>
@@ -234,7 +234,7 @@
         <!-- [data-interval] -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> [data-interval] </h3>
+                <h3> 5. [data-interval] </h3>
                 <pre></pre>
             </div>
 
@@ -252,7 +252,7 @@
         <!-- <script hiza-*> -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Scripts inside template </h3>
+                <h3> 6. Scripts inside template </h3>
                 <pre></pre>
             </div>
 
@@ -285,7 +285,7 @@
         <!-- SCOPE keyword -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Keywords </h3>
+                <h3> 7. Keywords </h3>
                 <pre></pre>
             </div>
 
@@ -317,7 +317,7 @@
         <!-- Manual templating -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Run manually </h3>
+                <h3> 8. Run manually </h3>
                 <pre></pre>
             </div>
 
@@ -347,7 +347,7 @@
         <!-- [data-timeout] -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> [data-timeout] </h3>
+                <h3> 9. [data-timeout] </h3>
                 <pre></pre>
             </div>
 
@@ -372,26 +372,22 @@
         <!-- Disable automatic init -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Disable automatic init </h3>
+                <h3> 10. Disable automatic init </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-
-                    <!-- Put before script import to disable automatic templating -->
                     <script>
+                        // Put before script import to ignore all hiža templates
                         var DISABLE_HIZA_INIT = true;
                     </script>
-                    <script src="https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/engine/hiza.engine.js"></script>
 
-                    <!-- To exclude single template from automatic init, use [data-ignore_init] -->
+                    <!-- Ignore a single HIŽA template -->
                     <template hiza data-ignore_init>
                         I am not rendered.
                     </template>
-
-                    Template rendered.
                 </div>
             </div>
         </div>
@@ -399,7 +395,7 @@
         <!-- SCOPE.DEST -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> SCOPE.DEST </h3>
+                <h3> 11. SCOPE.DEST </h3>
                 <pre></pre>
             </div>
 
@@ -409,17 +405,11 @@
                     <p id="dest_example"></p>
 
                     <template hiza data-dest="#dest_example">
-                    
-                        Hello <span class="make_underline">world</span>!
+                        Hello world!
 
-                        <!-- Run script after templating -->
+                        <!-- Change style of destination container -->
                         <script hiza-defer>
-
-                            // SCOPE.DEST is the same as document.getElementById('dest_example')
-
-                            // Apply style to .make_underline
-                            let span_underline = SCOPE.DEST.querySelector('.make_underline');
-                            span_underline.style.textDecoration = 'underline';
+                            SCOPE.DEST.style.textAlign = 'center';
                         </script>
                     </template>
                 </div>
@@ -429,7 +419,7 @@
         <!-- [data-overwrite] keyword -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> Overwriting </h3>
+                <h3> 12. Overwriting </h3>
                 <pre></pre>
             </div>
 
@@ -461,7 +451,7 @@
         <!-- [data-url] and .load -->
         <div class="row tutorial_row">
             <div class="col-md-8 tutorial">
-                <h3> Remote sources </h3>
+                <h3> 13. Remote sources </h3>
                 <pre></pre>
             </div>
 
@@ -469,25 +459,8 @@
                 <h3> &nbsp; </h3>
                 <div class="result">
 
-                    <!-- Load with [data-url] -->
-                    <p> 1. Load HTML into a div (raw HTML) </p>
-                    <div class="border" hiza data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html"></div>
-                    
-                    <p> 2. Manual load (raw HTML) </p>
-                    <div class="p-2 mb-2 border" id="manual_load_example"></div>
-                    <script>
-                        let manual_load_url = 'https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html';
-                        hiza.engine.load(manual_load_example, manual_load_url);  // GET
-                        //hiza.engine.load(manual_load_example, manual_load_url, body);  // POST
-                    </script>
-
-                    <!-- 
-                        [data-url] appends HTML to template
-                        NOTE: To load with a POST request, set a [data-body] parameter
-                    -->
-                    <p> 3. Manual load (HIŽA Templating) </p>
-                    <div class="p-2 border" id="hiza_load_example"></div>
-                    <template hiza data-dest="#hiza_load_example" data-interval="1000" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
+                    <!-- [data-url] fetches remote HTML and appends it to the template -->
+                    <template hiza data-interval="1000" data-url="https://raw.githubusercontent.com/nevenpalcec/hiza_js/main/hiza/_src/page.hiza.html">
 
                         <script hiza-sync>
                             SCOPE['message'] = (SCOPE['message'] || 0) + 1;
@@ -501,7 +474,7 @@
         <!-- $encode -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> $encode </h3>
+                <h3> 14. $encode </h3>
                 <pre></pre>
             </div>
 
@@ -525,7 +498,7 @@
         <!-- $decode -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> $decode </h3>
+                <h3> 15. $decode </h3>
                 <pre></pre>
             </div>
 
@@ -545,15 +518,14 @@
         <!-- $json -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> JSON - $json, $formatted </h3>
+                <h3> 16. JSON </h3>
                 <pre></pre>
             </div>
 
             <div class="col-md-6 tutorial">
                 <h3> &nbsp; </h3>
                 <div class="result">
-                    <!-- Check if new 'cat_fact' loaded every 1000ms -->
-                    <!-- TODO - check why cat_fact not updating with new data -->
+
                     <template hiza data-interval="1000">
 
                         <!-- Raw -->
@@ -575,6 +547,9 @@
                             }
                         </p>
                     </template>
+
+                    <!-- Tip: Update the cat fact (example no. 8) -->
+                    <button class="btn btn-success w-100" onclick="cat_template.hiza.run()">Update cat fact</button>
                 </div>
             </div>
         </div>
@@ -582,7 +557,7 @@
         <!-- $innertext -->
         <div class="row tutorial_row">
             <div class="col-md-6 tutorial">
-                <h3> $innertext </h3>
+                <h3> 17. $innertext </h3>
                 <pre></pre>
             </div>
 
