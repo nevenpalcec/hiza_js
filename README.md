@@ -28,7 +28,9 @@ hiza.dropdown - [css](https://cdn.jsdelivr.net/gh/nevenpalcec/hiza_js/hiza/compo
 ## hiza.dropdown
 ```html
 <div id="dropdown_example" class="hiza_dropdown">
-    <button class="hiza_dropdown-btn hiza_dropdown-toggle" type="button" data-value="">Select a peron</button>
+    <button class="hiza_dropdown-btn hiza_dropdown-toggle" type="button" data-value="">
+      Select a peron
+    </button>
     <ul class="hiza_dropdown-menu hidden">
         <li class="hiza_dropdown-item" data-value="1">John</li>
         <li class="hiza_dropdown-item" data-value="2">Catherine</li>
