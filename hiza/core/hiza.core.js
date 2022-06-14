@@ -599,6 +599,15 @@ hiza.core = new function () {
     // Html manipulation
     this.html = new function () {
 
+        this.delayed_keyup = function(input, trigger_function, delay=250) {
+
+            let tid = null;
+            input.addEventListener('keyup', function() {
+                clearTimeout(tid);
+                tid = setTimeout(trigger_function, delay);
+            });
+        }
+
         // add html to element, like div
         this.insertAdjacentHTML = function (id, html) {
             //debugger;

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Delayed keyup</h1>    
+    <p>
+        Try typing something to the input
+    </p>
+    <input id="input_el" type="text">
+    <div>
+        I found this text: <span id="output">#</span>
+    </div>
+
+    <script src="/hiza/core/hiza.core.js"></script>
+    <script>
+        hiza.core.html.delayed_keyup(input_el, function() {
+            output.innerText = input_el.value;
+        });
+    </script>
+</body>
+</html>
