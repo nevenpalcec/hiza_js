@@ -17,11 +17,6 @@ hiza.dropdown = new function() {
 
     function setup_ui(dropdown) {
 
-        console.log(dropdown);
-
-        // Ako želiš nešto odabrati, pozovi .querySelector
-        // Npr
-
         let btn = dropdown.querySelector(".hiza_dropdown-btn");
         let menu = dropdown.querySelector(".hiza_dropdown-menu");
         let btn_box = dropdown.querySelector(".hiza_dropdown-box");
