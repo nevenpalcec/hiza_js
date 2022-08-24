@@ -837,12 +837,31 @@ hiza.core = new function () {
             let emails_regex = /([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})/g;
             let phone_num_regex = /((\+|0*)\d{1,3}(-|\/|\s|))?\d{2,3}(-|\/|\s|)\d{3}(-|\/|\s|)\d{4}/g;
 
+            // Emails regex: ([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})
+            /* Matches these e-mails:
+                support@my-rents.com
+                support.abc@my-rents.com
+                Suppor123_myr.test@my-rents_2.com.hr
+                ...
+             */
             let found_emails = Array.from(s.matchAll(emails_regex)).map(regx => {
                 return {
                     email: regx[0],
                     index: regx['index']
                 }
             });
+            
+            // Phone numbers regex: ((\+|0*)\d{1,3}(-|\/|\s|))?\d{2,3}(-|\/|\s|)\d{3}(-|\/|\s|)\d{4}
+            /* Matches these numbers:
+                098-111-1111
+                098 111 1111
+                098/111-1111
+                0981111111
+                +38598 111 1111
+                00385 98 111 1111
+                0385 98 111 1111
+                ...
+             */
             let found_tel = Array.from(s.matchAll(phone_num_regex)).map(regx => {
                 return {
                     tel: regx[0],
