@@ -832,6 +832,32 @@ hiza.core = new function () {
             return s;
         }
 
+        this.find_contacts = (s) => {
+
+            let emails_regex = /([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})/g;
+            let phone_num_regex = /((\+|0*)\d{1,3}(-|\/|\s|))?\d{2,3}(-|\/|\s|)\d{3}(-|\/|\s|)\d{4}/g;
+
+            let found_emails = Array.from(s.matchAll(emails_regex)).map(regx => {
+                return {
+                    email: regx[0],
+                    index: regx['index']
+                }
+            });
+            let found_tel = Array.from(s.matchAll(phone_num_regex)).map(regx => {
+                return {
+                    tel: regx[0],
+                    index: regx['index']
+                }
+            });
+
+            let info = {
+                input: s,
+                emails: found_emails,
+                phone_numbers: found_tel
+            };
+            return info;
+        }
+
     }
 
     // Class containing useful url methods
