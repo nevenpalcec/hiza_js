@@ -877,6 +877,35 @@ hiza.core = new function () {
             return info;
         }
 
+        this.remove_contacts = (s) => {
+            
+            // Emails regex: ([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})
+            /* Matches these e-mails:
+                support@my-rents.com
+                support.abc@my-rents.com
+                Suppor123_myr.test@my-rents_2.com.hr
+                ...
+             */
+            let emails_regex = /([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})/g;
+
+            // Phone numbers regex: ((\+|0*)\d{1,3}(-|\/|\s|))?\d{2,3}(-|\/|\s|)\d{3}(-|\/|\s|)\d{4}
+            /* Matches these numbers:
+                098-111-1111
+                098 111 1111
+                098/111-1111
+                0981111111
+                +38598 111 1111
+                00385 98 111 1111
+                0385 98 111 1111
+                ...
+             */
+            let phone_num_regex = /((\+|0*)\d{1,3}(-|\/|\s|))?\d{2,3}(-|\/|\s|)\d{3}(-|\/|\s|)\d{4}/g;
+
+            s = s.replace(emails_regex, '');
+            s = s.replace(phone_num_regex, '');
+            return s;
+        }
+
     }
 
     // Class containing useful url methods
